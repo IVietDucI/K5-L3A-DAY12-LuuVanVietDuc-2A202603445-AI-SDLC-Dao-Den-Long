@@ -1,0 +1,146 @@
+Clean source snapshot from tracked and unignored working-tree files. node_modules, dist and .git are absent.
+Node v26.13.1; npm registry cache mode: default
+> cmd.exe /d /c npm.cmd ci
+
+added 16 packages, and audited 17 packages in 4s
+
+8 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+> cmd.exe /d /c npm.cmd test
+
+> dao-den-long@1.0.0 test
+> node --test
+
+✔ v1.3 preserves night timing, geometry and arrays for all three nights (337.1934ms)
+✔ CP1 movement regression preserves initial state and snapshot cadence (104.5033ms)
+✔ pickup requires XZ <= 1 and Y gap <= 1.5 without scoring on pickup (77.8021ms)
+✔ CP1 deposit regression honors ties, edge presses, partial amounts and the new score (80.7533ms)
+✔ elevation does not affect the inclusive 2 m XZ deposit while Pulse uses 3D (76.2694ms)
+✔ the final inclusive-range deposit wins at dawn unless no flames remain (319.7611ms)
+✔ pause counts wall ticks while freezing movement, cooldowns, invulnerability and TTL (82.4139ms)
+✔ fall ignores invulnerability, loses the entire bag once, then respawns after 60 ticks (80.0937ms)
+✔ Đảo Cau bridge bounds and launch preserve velocity until landing on the other island (199.5072ms)
+✔ Đảo Chuông levels, both ramps, tower wall and launch produce the correct landings (173.6737ms)
+✔ wind activates at simulation tick 1800 and delivers 2 m/s for 300 ticks (96.9576ms)
+✔ Pulse locks 3D targets, pushes 4 m in 15 ticks and resets a stunned shade (142.2023ms)
+✔ Bóng Mực evicts to the safe boundary within 30 ticks and cannot cross it (72.665ms)
+✔ shade contact honors ID, height and immunity, with 60 recoil steps and drop TTL (87.4126ms)
+✔ CP1 configured shade hits on tick 1, hits at immunity expiry and causes flame loss (76.4797ms)
+✔ Gió Lạc steals before the hit, drops recovered motes on Pulse and disappears on schedule (146.2945ms)
+✔ Bùa Gió permits an edge-pressed second dash, boosts run and respawns after 2700 ticks (91.6695ms)
+✔ spawn schedules differ by night and new motes and shades only act next tick (491.2559ms)
+✔ errors return code 2 for v1.1 controls and for the retained CP1 invalid fixtures (207.5755ms)
+✔ a full 18,000-tick headless run stays deterministic under full spawn and wind load (925.1878ms)
+✔ repeating the no-scenario Night 1 run preserves spawn IDs and bytes (168.9937ms)
+✔ fuel at exactly 30 is safe and the next fuel unit below 30 is not (104.6354ms)
+✔ two drains stack with natural decay, report once per 60 active ticks, and extinguish the lamp (97.6084ms)
+✔ Pulse stops future drain ticks and scores 15 for a drainer plus 5 for another shade (88.8606ms)
+✔ refueling stops drain, restores shelter, and expels the shade without damage (104.7238ms)
+✔ refuel uses exact missing fuel, clamps to 100 and skips a full lamp (81.9281ms)
+✔ a light that goes out may relight in the same tick and contributes to the capacity cap (83.0553ms)
+✔ a scenario light has fuel and history but adds no capacity; pickups honor capacity after a successful light (83.5537ms)
+✔ all 3 dawn thresholds use live lamps and exact remaining fuel for the winning bonus (376.8587ms)
+✔ pausing freezes fuel and the scheduled drain report (81.4236ms)
+✔ wander prefers a weak lamp and breaks ties by ID while chase keeps tracking Mây (75.1526ms)
+✔ drain exits on player radius 6 or when the target moves outside its 2 m range (90.4319ms)
+✔ a scenario targeting a nonexistent lamp is rejected as a CLI input error (79.538ms)
+✔ the default Đảo Bến can be maintained until dawn under v1.2 rules (206.5351ms)
+✔ v1.3 commands and fixed benchmark scene preserve simulation state except ordinary wander (105.5456ms)
+✔ benchmark metrics use the actual sum, nearest-rank p95 and ceil worst 1% (0.8215ms)
+✔ all nine key bindings persist with validation and aliases cannot shadow explicit keys (0.4379ms)
+✔ leaderboard keeps only top 10, orders ties chronologically and exports saved scores in a later process (135.3909ms)
+✔ soak CLI writes real per-night results and rejects invalid arguments (530.9315ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4195.0813
+> cmd.exe /d /c npm.cmd run build
+
+> dao-den-long@1.0.0 build
+> vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 20 modules transformed.
+rendering chunks...
+computing gzip size...
+../../../../../../Viet Duc/AppData/Local/Temp/dao-cp4-clean-2qTt44/source/dist/index.html                      5.48 kB │ gzip:   1.74 kB
+../../../../../../Viet Duc/AppData/Local/Temp/dao-cp4-clean-2qTt44/source/dist/assets/view-DtSrxv2E.css        8.17 kB │ gzip:   2.70 kB
+../../../../../../Viet Duc/AppData/Local/Temp/dao-cp4-clean-2qTt44/source/dist/assets/benchmark-G7ecoBQ1.js    1.76 kB │ gzip:   1.02 kB
+../../../../../../Viet Duc/AppData/Local/Temp/dao-cp4-clean-2qTt44/source/dist/assets/index-D7j3B3Qq.js        2.74 kB │ gzip:   1.31 kB
+../../../../../../Viet Duc/AppData/Local/Temp/dao-cp4-clean-2qTt44/source/dist/assets/main-CzJUyShe.js        16.10 kB │ gzip:   6.98 kB
+../../../../../../Viet Duc/AppData/Local/Temp/dao-cp4-clean-2qTt44/source/dist/assets/view-AI3_KoGo.js       579.49 kB │ gzip: 151.76 kB
+
+✓ built in 245ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+> cmd.exe /d /c npm.cmd run package
+
+> dao-den-long@1.0.0 package
+> node scripts/package.mjs
+
+C:\Users\VIETDU~1\AppData\Local\Temp\dao-cp4-clean-2qTt44\source\artifacts\dao-den-long-v1.0.0.tar.gz
+SHA256 e8dded7aab476012ac3acfc54422220a2cb78e6dd6c29fac0de9e53500342878
+> C:\Program Files\nodejs\node.exe docs/proof/phase-3/replay.mjs
+movement: exit 0, 71.1 ms
+final-lantern: exit 0, 62.3 ms
+priority: exit 0, 66.9 ms
+pause-dash: exit 0, 87.2 ms
+fall: exit 0, 144.3 ms
+bridge: exit 0, 83.0 ms
+pad-cau: exit 0, 87.0 ms
+pad-chuong: exit 0, 64.8 ms
+ramp: exit 0, 71.4 ms
+pulse: exit 0, 65.0 ms
+shelter: exit 0, 68.2 ms
+steal-drop: exit 0, 94.4 ms
+charm: exit 0, 94.4 ms
+wind: exit 0, 83.7 ms
+night1-spawn: exit 0, 85.6 ms
+night2-spawn: exit 0, 94.7 ms
+night3-spawn: exit 0, 77.4 ms
+full-night: exit 0, 459.0 ms
+invalid: exit 2, 73.7 ms
+spawn-pickup: exit 0, 70.5 ms
+partial-deposit: exit 0, 68.0 ms
+drifter-repel: exit 0, 79.4 ms
+pickup-height: exit 0, 93.2 ms
+recoil: exit 0, 75.6 ms
+dawn: exit 0, 62.4 ms
+spawn-pulse: exit 0, 74.9 ms
+pulse-wall: exit 0, 62.8 ms
+deposit-height: exit 0, 62.6 ms
+timed-win: exit 0, 63.7 ms
+shade-loss: exit 0, 62.4 ms
+fuel-threshold: exit 0, 60.5 ms
+multi-drain: exit 0, 64.9 ms
+pulse-drain: exit 0, 66.0 ms
+refuel-shelter: exit 0, 73.1 ms
+refuel-full: exit 0, 60.0 ms
+relight-cap: exit 0, 67.4 ms
+capacity-pickup: exit 0, 76.3 ms
+dawn-n1: exit 0, 78.6 ms
+dawn-n2: exit 0, 65.7 ms
+dawn-n3: exit 0, 64.4 ms
+dawn-out: exit 0, 64.1 ms
+dawn-light: exit 0, 63.6 ms
+pause-fuel: exit 0, 72.4 ms
+wander-targets: exit 0, 64.1 ms
+drain-exits: exit 0, 70.3 ms
+invalid-target: exit 2, 61.5 ms
+night1-survival: exit 0, 161.1 ms
+> tar.exe -xzf C:\Users\VIETDU~1\AppData\Local\Temp\dao-cp4-clean-2qTt44\source\artifacts\dao-den-long-v1.0.0.tar.gz -C C:\Users\VIETDU~1\AppData\Local\Temp\dao-cp4-clean-2qTt44\release
+> node scripts/run.mjs --no-open
+Đảo Đèn Lồng · http://127.0.0.1:64513/
+Release smoke: HTTP 200 for index, compiled JS and leaderboard API, no npm dependencies installed.
+Release browser smoke: Chrome/157.0.8103.79 / SwiftShader, menu to gameplay at 1280×720.
+Release SHA256 e8dded7aab476012ac3acfc54422220a2cb78e6dd6c29fac0de9e53500342878

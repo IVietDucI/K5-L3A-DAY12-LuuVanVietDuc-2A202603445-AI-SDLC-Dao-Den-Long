@@ -208,6 +208,45 @@ function makeShade(scene) {
   return { root, ink, outline: outline.material, eye }
 }
 
+function makeShadeBatches(scene, count) {
+  const geometry = new THREE.IcosahedronGeometry(.57, 1)
+  const body = new THREE.InstancedMesh(geometry, basic(palette.ink), count)
+  const outline = new THREE.InstancedMesh(geometry, basic(palette.violet, { side: THREE.BackSide }), count)
+  const eyes = new THREE.InstancedMesh(new THREE.SphereGeometry(.061, 8, 6), basic(palette.violet), count * 2)
+  for (const batch of [body, outline, eyes]) {
+    batch.frustumCulled = false
+    batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
+    scene.add(batch)
+  }
+  return { body, outline, eyes }
+}
+
+function drawShadeBatches({ body, outline, eyes }, shades, time, matrix) {
+  for (let index = 0; index < shades.length; index++) {
+    const [x, y, z] = shades[index].pos
+    const height = y + .12 * Math.sin(time * 4 + index)
+    const facing = Math.atan2(-x, -z)
+    matrix.position.set(x, height, z)
+    matrix.rotation.set(0, facing, 0)
+    matrix.scale.set(.86, 1.22, .79)
+    matrix.updateMatrix()
+    body.setMatrixAt(index, matrix.matrix)
+    matrix.scale.multiplyScalar(1.07)
+    matrix.updateMatrix()
+    outline.setMatrixAt(index, matrix.matrix)
+    matrix.scale.setScalar(1)
+    const cos = Math.cos(facing)
+    const sin = Math.sin(facing)
+    for (const eye of [0, 1]) {
+      const side = eye ? .16 : -.16
+      matrix.position.set(x + side * cos + .417 * sin, height + .13, z - side * sin + .417 * cos)
+      matrix.updateMatrix()
+      eyes.setMatrixAt(index * 2 + eye, matrix.matrix)
+    }
+  }
+  body.instanceMatrix.needsUpdate = outline.instanceMatrix.needsUpdate = eyes.instanceMatrix.needsUpdate = true
+}
+
 function drawMap(canvas, ctx, sim, yaw) {
   const mid = canvas.width / 2
   const bases = sim.island.bases
@@ -229,19 +268,19 @@ function drawMap(canvas, ctx, sim, yaw) {
     ctx.fillStyle = '#c9b48a'
     ctx.fillRect(mapX(minX), mid + minZ * scale, (maxX - minX) * scale, (maxZ - minZ) * scale)
   }
-  ctx.font = 'bold 12px system-ui'
+  ctx.font = 'bold 21px system-ui'
   ctx.textAlign = 'center'
   for (const lantern of sim.lanterns) {
     const x = mapX(lantern.pos[0])
     const y = mid + lantern.pos[2] * scale
     ctx.beginPath()
-    ctx.arc(x, y, 8, 0, Math.PI * 2)
+    ctx.arc(x, y, 11, 0, Math.PI * 2)
     ctx.fillStyle = lantern.lit ? '#ffc16b' : '#16292d'
     ctx.fill()
     ctx.strokeStyle = lantern.lit ? '#ffe4ad' : '#a9c1b9'
     ctx.stroke()
     ctx.fillStyle = lantern.lit ? '#36210e' : '#f0f7de'
-    ctx.fillText(lantern.id.slice(1), x, y + 4)
+    ctx.fillText(lantern.id.slice(1), x, y + 6)
   }
   ctx.save()
   ctx.translate(mapX(sim.player.pos[0]), mid + sim.player.pos[2] * scale)
@@ -271,7 +310,8 @@ function cameraDistance(island, [x, y, z], dx, dz, behind) {
 }
 
 export class GameView {
-  constructor(canvas, markerLayer, map, sim) {
+  constructor(canvas, markerLayer, map, sim, { benchmark = false } = {}) {
+    this.benchmark = benchmark
     this.canvas = canvas
     this.markerLayer = markerLayer
     this.arrow = document.getElementById('lantern-arrow')
@@ -303,9 +343,10 @@ export class GameView {
     const roof = cylinder(.11, .72, .39, 8)
     const tear = lanternTearGeometry()
     this.lanterns = sim.lanterns.map((lantern) => makeLantern(this.scene, this.markerLayer, lantern, frame, wood, roof, tear))
-    this.motes = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.17, 0), basic(palette.mote), 64)
+    const moteCapacity = Math.max(64, sim.motes.length)
+    this.motes = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.17, 0), basic(palette.mote), moteCapacity)
     this.halos = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.28, 0),
-      basic(palette.halo, { transparent: true, opacity: .22, depthWrite: false }), 64)
+      basic(palette.halo, { transparent: true, opacity: .22, depthWrite: false }), moteCapacity)
     this.leaves = new THREE.InstancedMesh(new THREE.PlaneGeometry(.2, .12),
       basic(0x81ac7e, { side: THREE.DoubleSide }), 16)
     for (const batch of [this.motes, this.halos, this.leaves]) {
@@ -319,6 +360,7 @@ export class GameView {
     })
     this.player = makePlayer(this.scene)
     this.shades = new Map()
+    if (this.benchmark) this.shadeBatches = makeShadeBatches(this.scene, sim.shades.length)
     this.drifters = new Map()
     this.pulseRing = mesh(this.scene, planeRing(.94, 1),
       new THREE.MeshBasicMaterial({ color: 0xffd589, transparent: true, depthWrite: false }), 0, .05, 0)
@@ -335,7 +377,7 @@ export class GameView {
     this.renderer.setSize(width, height, false)
   }
 
-  draw(sim, yaw) {
+  draw(sim, yaw, orbit) {
     const [x, y, z] = sim.player.pos
     const t = sim.simTick * STEP
     this.player.root.position.set(x, y, z)
@@ -345,13 +387,14 @@ export class GameView {
     this.player.glow.position.set(x, floor + .024, z)
     this.player.glow.visible = this.player.shadow.visible
     this.player.glow.material.opacity = .5 / Math.max(1, 1 + y - floor)
-    this.player.root.visible = sim.player.respawning === 0 && (sim.player.invuln === 0 || Math.floor(t * 12) % 2 === 0)
+    this.player.root.visible = sim.player.respawning === 0 &&
+      (this.reducedMotion || sim.player.invuln === 0 || Math.floor(t * 12) % 2 === 0)
     this.player.root.rotation.y = Math.atan2(...sim.player.facing)
     const walking = Math.hypot(sim.player.vel[0], sim.player.vel[2]) > .2
     this.player.legs[0].rotation.x = walking && sim.player.grounded ? Math.sin(t * 15) * .52 : 0
     this.player.legs[1].rotation.x = -this.player.legs[0].rotation.x
     const matrix = this.matrix
-    const count = Math.min(sim.motes.length, 64)
+    const count = Math.min(sim.motes.length, this.motes.instanceMatrix.count)
     this.motes.count = this.halos.count = count
     matrix.rotation.set(0, 0, 0)
     for (let index = 0; index < count; index++) {
@@ -367,7 +410,8 @@ export class GameView {
       charm.rotation.y = t * 1.3
     })
 
-    for (const shade of sim.shades) {
+    if (this.shadeBatches) drawShadeBatches(this.shadeBatches, sim.shades, t, matrix)
+    else for (const shade of sim.shades) {
       if (!this.shades.has(shade.id)) this.shades.set(shade.id, makeShade(this.scene))
       const { root, ink, outline, eye } = this.shades.get(shade.id)
       root.position.fromArray(shade.pos)
@@ -422,13 +466,18 @@ export class GameView {
       this.leaves.instanceMatrix.needsUpdate = true
     }
 
-    const cameraY = Math.max(y, -2.8)
-    const dx = Math.sin(yaw)
-    const dz = Math.cos(yaw)
-    const distance = cameraDistance(sim.island, [x, cameraY, z], dx, dz, behind)
-    const ratio = distance / behind
-    this.camera.position.set(x + dx * distance, cameraY + Math.max(2.7, 1.35 + 6.45 * ratio), z + dz * distance)
-    this.camera.lookAt(x - dx * 3.3 * ratio, 1.25 + cameraY, z - dz * 3.3 * ratio)
+    if (orbit) {
+      this.camera.position.fromArray(orbit)
+      this.camera.lookAt(0, 0, 0)
+    } else {
+      const cameraY = Math.max(y, -2.8)
+      const dx = Math.sin(yaw)
+      const dz = Math.cos(yaw)
+      const distance = cameraDistance(sim.island, [x, cameraY, z], dx, dz, behind)
+      const ratio = distance / behind
+      this.camera.position.set(x + dx * distance, cameraY + Math.max(2.7, 1.35 + 6.45 * ratio), z + dz * distance)
+      this.camera.lookAt(x - dx * 3.3 * ratio, 1.25 + cameraY, z - dz * 3.3 * ratio)
+    }
     this.camera.updateMatrixWorld()
     sim.lanterns.forEach((lantern, index) => {
       const view = this.lanterns[index]
@@ -446,7 +495,7 @@ export class GameView {
         view.label.classList.toggle('lit', lantern.lit)
       }
       const weak = isWeak(lantern)
-      const blink = weak ? .42 + .58 * (1 + Math.cos(t * Math.PI * 2)) / 2 : 1
+      const blink = weak && !this.reducedMotion ? .42 + .58 * (1 + Math.cos(t * Math.PI * 2)) / 2 : 1
       view.shelter.visible = lantern.lit && !weak
       view.paper.emissiveIntensity = lantern.lit ? .65 * blink : 0
       view.glow.material.opacity = .13 * blink
@@ -457,6 +506,7 @@ export class GameView {
         view.meter.style.setProperty('--fuel', fuelOf(lantern) / tuning.fuel_max)
         view.meter.style.setProperty('--blink-opacity', blink)
       }
+      if (orbit) return
       const point = this.projection.fromArray(lantern.pos)
       point.y += lantern.lit ? 3.69 : 3.48
       point.project(this.camera)
@@ -467,6 +517,10 @@ export class GameView {
         view.label.style.transform = `translate(${left}px, ${top}px) translate(-50%, -50%)`
       }
     })
+    if (orbit) {
+      this.renderer.render(this.scene, this.camera)
+      return
+    }
     const nearest = sim.nearestUnlitLantern()
     this.arrow.hidden = !nearest || !this.lanterns[sim.lanterns.indexOf(nearest)].label.hidden
     if (!this.arrow.hidden) {

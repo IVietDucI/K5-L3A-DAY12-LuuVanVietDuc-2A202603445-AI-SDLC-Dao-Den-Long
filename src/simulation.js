@@ -45,7 +45,7 @@ function direction(from, to) {
   return distance > EPS ? [(to[0] - from[0]) / distance, (to[2] - from[2]) / distance] : [1, 0]
 }
 
-function seededRandom(seed) {
+export function seededRandom(seed) {
   let state = seed >>> 0
   return () => {
     state = (state + 0x6D2B79F5) >>> 0
@@ -532,7 +532,7 @@ export class Simulation {
     return true
   }
 
-  moveShades() {
+  moveShades(wanderOnly = false) {
     const p = this.player
     const speed = this.night === 3 ? tuning.shade_speed_night3 : tuning.shade_speed
     for (const shade of this.shades) {
@@ -557,7 +557,7 @@ export class Simulation {
         this.stopDrain(shade, 'chase')
       }
       const threshold = shade.state === 'chase' ? tuning.shade_lose_radius : tuning.shade_detect_radius
-      shade.state = p.respawning === 0 && distance <= threshold + EPS ? 'chase' : 'wander'
+      shade.state = !wanderOnly && p.respawning === 0 && distance <= threshold + EPS ? 'chase' : 'wander'
       if (shade.state === 'chase') {
         if (distance > EPS) this.shadeStep(shade, direction(shade.pos, p.pos), Math.min(distance, speed * STEP))
       } else {

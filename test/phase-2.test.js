@@ -12,8 +12,8 @@ const empty = { random_motes: false, random_shades: false, random_drifters: fals
 const event = (tick, name, data = {}) => ({ type: 'event', tick, name, data })
 const near = (a, b, delta = .001) => assert.ok(Math.abs(a - b) <= delta, `${a} differs from ${b}`)
 
-test('v1.2 manifests night timing, geometry and arrays for all three nights', () => {
-  assert.equal(contract.contract_version, '1.2')
+test('v1.3 preserves night timing, geometry and arrays for all three nights', () => {
+  assert.equal(contract.contract_version, '1.3')
   assert.equal(contract.headless_cmd, 'node src/headless.js')
   assert.equal(tuning.lantern_cost, 10)
   assert.equal(tuning.carry_capacity, 10)

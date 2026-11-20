@@ -11,6 +11,8 @@
       <canvas id="world" aria-label="Cảnh đảo ở góc nhìn thứ ba"></canvas>
       <div id="markers" aria-hidden="true"></div>
       <div id="lantern-arrow" aria-label="Hướng tới đèn chưa sáng" hidden><span aria-hidden="true">▲</span><strong></strong></div>
+      <div id="shade-arrow" aria-hidden="true" hidden>▲</div>
+      <p id="captions" role="status" aria-live="polite" hidden></p>
 
       <header class="hud" id="hud" hidden>
         <div class="identity">
@@ -33,9 +35,9 @@
 
       <section class="field-guide" id="guide" aria-label="Hướng dẫn chơi" hidden>
         <div class="controls">
-          <span><kbd>WASD</kbd> Đi</span>
-          <span><kbd>Space</kbd> Nhảy</span>
-          <span><kbd>Esc</kbd> Dừng</span>
+          <span><kbd id="move-keys"></kbd> Đi</span>
+          <span><kbd data-key="jump">Space</kbd> Nhảy</span>
+          <span><kbd data-key="pause">Esc</kbd> Dừng</span>
         </div>
       </section>
       <section id="inventory" class="inventory" aria-label="Đom đóm đang mang" hidden>
@@ -44,18 +46,25 @@
         <span id="carried"></span>
       </section>
       <div class="abilities" id="abilities" hidden>
-        <div class="ability" id="dash-ability"><kbd>Shift</kbd><span>Lướt</span><strong id="dash-info"></strong></div>
-        <div class="ability" id="pulse-ability"><kbd>F</kbd><span>Tỏa Sáng</span><strong id="pulse-info"></strong></div>
+        <div class="ability" id="dash-ability"><kbd data-key="dash">Shift</kbd><span>Lướt</span><strong id="dash-info"></strong></div>
+        <div class="ability" id="pulse-ability"><kbd data-key="pulse">F</kbd><span>Tỏa Sáng</span><strong id="pulse-info"></strong></div>
       </div>
 
       <section id="round-panel" class="round-panel" aria-labelledby="round-title">
         <p id="round-caption"></p>
         <h1 id="round-title">Đảo Đèn Lồng</h1>
         <p id="round-detail">Thắp đèn trên ba hòn đảo trước rạng đông.</p>
+        <form id="score-form" hidden>
+          <label for="score-name">Tên xếp hạng</label>
+          <input id="score-name" maxlength="12" placeholder="3–12 ký tự" autocomplete="off">
+          <button type="submit">Lưu điểm</button>
+          <p id="score-status" role="status"></p>
+        </form>
         <div class="panel-actions">
           <button id="round-button" type="button">Chơi</button>
           <button id="secondary-button" class="secondary" type="button">Cài đặt</button>
           <button id="menu-button" class="secondary" type="button" hidden>Về menu</button>
+          <button id="board-button" class="secondary" type="button" hidden>Bảng xếp hạng</button>
         </div>
       </section>
       <section id="settings-panel" class="round-panel" aria-labelledby="settings-title" hidden>
@@ -69,9 +78,27 @@
         <label class="setting setting-toggle" for="contrast">Bảng màu dễ phân biệt
           <input id="contrast" type="checkbox">
         </label>
+        <label class="setting setting-toggle" for="reduced">Giảm chuyển động<input id="reduced" type="checkbox"></label>
+        <label class="setting setting-toggle" for="large">Chữ lớn<input id="large" type="checkbox"></label>
+        <button id="key-settings" class="secondary" type="button">Đổi phím</button>
         <button id="settings-back" type="button">Quay lại</button>
       </section>
+      <section id="keys-panel" class="round-panel" aria-labelledby="keys-title" hidden>
+        <h2 id="keys-title">Đổi phím</h2>
+        <div id="bindings"></div>
+        <p id="binding-status" role="status"></p>
+        <div class="panel-actions">
+          <button id="keys-reset" class="secondary" type="button">Khôi phục mặc định</button>
+          <button id="keys-back" type="button">Quay lại</button>
+        </div>
+      </section>
+      <section id="board-panel" class="round-panel" aria-labelledby="board-title" hidden>
+        <h2 id="board-title">Bảng xếp hạng</h2>
+        <p id="board-message" role="status"></p>
+        <ol id="board-list"></ol>
+        <button id="board-back" type="button">Về menu</button>
+      </section>
     </main>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/entry.js"></script>
   </body>
 </html>

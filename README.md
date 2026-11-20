@@ -1,22 +1,31 @@
 # Day 12 — AI SDLC: Đảo Đèn Lồng
 
+[GitHub Release v1.0.0](https://github.com/IVietDucI/K5-L3A-DAY12-LuuVanVietDuc-2A202603445-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0) (sau khi phát hành) · [Bằng chứng CP4](docs/proof/phase-4/README.md)
+
 > **Cá nhân** (1 người / 1 MSSV) · Áp dụng SDLC cùng AI để xây một **game 3D** qua **4 phase**, từ yêu cầu ban đầu tới bản phát hành.
 > **Lab board + trợ giảng:** **[Đảo Đèn Lồng Lab](https://claude.ai/artifact/Q1RYyv1dxjUczzCbd2ZnoW)**
 
 ---
 
-## Chơi Đèn cạn dầu
+## Chơi Đảo Đèn Lồng v1.0.0
 
 **Lưu Văn Việt Đức · 2A202603445 · L3A**
 
-Cần Node.js 20.19+ (dòng 20) hoặc 22.12+, npm và trình duyệt có WebGL 2. Chạy trong thư mục repo trên Windows, macOS hoặc Linux.
+Mây gom đom đóm, né Bóng Mực và giữ đèn ở ba hòn đảo sáng tới bình minh.
+
+![Menu game ở 1280×720](docs/proof/phase-4/menu.png)
+
+[Kịch bản demo MP4](docs/demo/script.md) · [Hướng dẫn bản Release](docs/release.md) · [Bằng chứng Phase 4](docs/proof/phase-4/README.md)
+
+Cần Node.js 22.12 trở lên, npm và trình duyệt có WebGL 2. Từ bản clone sạch trên Windows, macOS hoặc Linux, chạy:
 
 ```sh
 npm ci
-npm run dev
+npm run build
+npm start
 ```
 
-Mở địa chỉ Vite in ra (thường là `http://localhost:5173/`), bấm **Chơi**, rồi **Bắt đầu**. Trên PowerShell, dùng `npm.cmd` thay `npm` nếu chính sách thực thi chặn `npm.ps1`.
+Trình chạy mở `http://127.0.0.1:4173/`. Bấm **Chơi**, rồi **Bắt đầu**. Trên PowerShell, dùng `npm.cmd` nếu hệ thống chặn `npm.ps1`. Dùng `npm run dev` khi sửa mã. Với gói Release đã giải nén, chỉ cần `node scripts/run.mjs`.
 
 | Điều khiển | Hành động |
 |---|---|
@@ -40,11 +49,13 @@ Thắp lần đầu cần 10 đom đóm, thắp lại cần 5. Đèn vừa thắ
 
 Gió Lạc có thể cướp 3 đom đóm. Tỏa Sáng xua Gió Lạc hoặc làm nó nhả đồ đã cướp. Bùa Gió cho chạy 7,2 m/s và lướt liên tiếp bằng lần nhấn mới trong 10 giây. Bóng Mực đánh mất một lửa và làm rơi nửa túi. Rơi xuống dưới Y = −10 làm mất một lửa và cả túi, sau đó hồi sinh sau 1 giây nếu còn lửa.
 
-Túi bắt đầu ở 10 ô và tăng 2 mỗi lần thắp, tối đa 20. **Cài đặt** có âm lượng, độ nhạy chuột và **Bảng màu dễ phân biệt**.
+Túi bắt đầu ở 10 ô và tăng 2 mỗi lần thắp, tối đa 20. **Cài đặt** lưu âm lượng, độ nhạy chuột, bảng màu dễ phân biệt, giảm chuyển động, chữ lớn và phím của cả chín hành động. Trò chơi chỉ rõ hướng Bóng Mực mới xuất hiện, báo gió sắp nổi, 10 giây cuối và đèn có dầu dưới 30.
 
 **Điểm.** +5 mỗi đom đóm nạp hoặc châm, +100 lần thắp đầu, +40 lần thắp lại. Tỏa Sáng cho +15 trên mỗi Bóng Mực đang hút dầu hoặc +5 ở trạng thái khác. Khi thắng, thưởng 50 cộng phần nguyên dầu của mỗi đèn đang sáng và 50 mỗi lửa còn. Màn Bình Minh tính tổng điểm các đêm thắng.
 
-## Kiểm chứng Phase 3
+Khi thua hoặc tới màn Bình Minh sau Đêm 3, nhập tên dài 3–12 ký tự A–Z, a–z, 0–9 hoặc dấu gạch dưới để lưu tổng điểm. Vào **Bảng xếp hạng** từ menu để xem top 10. Launcher và Vite dùng chung file `~/.dao-den-long/leaderboard.json`. Đặt `DAO_DATA_DIR` để dùng thư mục riêng. Xuất bảng đã lưu bằng `node scripts/run.mjs --export-leaderboard out.json`.
+
+## Kiểm chứng Phase 4
 
 ```sh
 npm test
@@ -58,7 +69,18 @@ CLI và giao diện dùng chung simulation 60 tick/giây. CLI nhận `--night 1`
 node src/headless.js --seed 12 --night 1 --scenario docs/proof/phase-3/refuel-shelter.scenario.json --inputs docs/proof/phase-3/refuel-shelter.inputs.json --ticks 31 --out trial.jsonl --snapshot-every 1
 ```
 
-[Test Contract v1.2](game.contract.json) · [Changelog](CHANGELOG.md) · [ADR](docs/adr/0001-lantern-fuel-and-dawn.md) · [Bảng kiểm chứng](docs/proof/phase-3/README.md) · [Ghi chú Phase 3](docs/notes/phase-3.md)
+```sh
+node scripts/bench.mjs --seed 42 --duration 30 --out bench.json
+node --jitless --expose-gc scripts/soak.mjs --seed 7 --nights 10 --out soak.json
+```
+
+Benchmark dùng bản `dist/` đã build, mở cửa sổ Chromium riêng ở 1280×720 và tự thoát sau 3 giây khởi động cộng thời lượng đo. Đặt `DAO_BROWSER` thành đường dẫn Chrome, Edge hoặc Chromium nếu trình chạy không tự tìm được. Dùng cửa sổ thường và GPU thật khi đo theo ticket. `DAO_BENCH_HEADLESS=1` và `DAO_BENCH_SOFTWARE=1` phục vụ chẩn đoán. Chromium nhận cờ `--disable-frame-rate-limit` và `--disable-gpu-vsync`. `peak_mem_mb` là `null` vì phép đo WebGL trong trình duyệt không xác định được peak RSS riêng của cảnh qua API web. [Mã nguồn cờ Chromium](https://chromium.googlesource.com/chromium/src/%2B/6fce3ce354a9abd5a4fd06f558ea5713e29a8d92/components/viz/common/switches.cc).
+
+Kết quả benchmark trong repo được đo trên máy hiện tại (Windows, Intel Core i7-11800H, Intel UHD Graphics, Chrome 157). [Cấu hình và kết quả đo CP4](docs/proof/phase-4/README.md#cấu-hình-đo).
+
+Soak chạy 10 đêm trong cùng tiến trình Node và ghi RSS trước/sau. Tạo lại gói Release sau khi build bằng `npm run package` với lệnh `tar` có sẵn trên hệ điều hành.
+
+[Test Contract v1.3](game.contract.json) · [Changelog](CHANGELOG.md) · [Nguồn và giấy phép](CREDITS.md) · [Retro bốn phase](docs/retro.md) · [ADR](docs/adr/0001-lantern-fuel-and-dawn.md)
 
 ## Tài liệu của lab
 
