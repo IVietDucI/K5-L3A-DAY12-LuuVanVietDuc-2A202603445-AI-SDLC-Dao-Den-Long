@@ -6,6 +6,7 @@
   font-synthesis: none;
   --muted: #bbceca;
   --amber: #f2c14e;
+  --danger: #ff5a5f;
   --panel: rgba(11, 26, 34, .91);
   --border: rgba(184, 214, 207, .23);
 }
@@ -56,6 +57,11 @@ button, kbd { font: inherit; }
   font-weight: 800;
 }
 .marker.lit { background: #39291c; color: var(--amber); border-color: #e9a350; }
+.marker.low-fuel { border-color: var(--danger); color: var(--danger); }
+.marker-warning { padding-right: .2rem; }
+.marker-meter { display: block; width: 2.2rem; height: .25rem; margin: .15rem auto .04rem; border-radius: .1rem; background: #142332; }
+.marker-meter i { display: block; height: 100%; background: currentColor; transform-origin: left; transform: scaleX(var(--fuel)); opacity: var(--blink-opacity, 1); }
+#game.accessible-palette { --danger: #ffffff; }
 
 .hud {
   position: absolute;
@@ -116,7 +122,8 @@ dd { margin: .08rem 0 0; font-size: 1.17rem; font-weight: 750; font-variant-nume
 .clock { position: absolute; left: 50%; transform: translateX(-50%); grid-template-columns: 1fr; text-align: center; padding: .4rem 1rem; }
 .clock span { font-size: .72rem; color: var(--muted); }
 .clock strong { font-size: 1.55rem; font-variant-numeric: tabular-nums; }
-#timer.urgent { color: #ff5a5f; animation: timer-pulse 1s infinite; }
+#timer.urgent { color: var(--danger); animation: timer-pulse 1s infinite; }
+#game.accessible-palette #timer.urgent::before { content: "⚠ "; }
 @keyframes timer-pulse { 50% { opacity: .58; } }
 @media (prefers-reduced-motion: reduce) { #timer.urgent { animation: none; } }
 
@@ -164,7 +171,7 @@ dd { margin: .08rem 0 0; font-size: 1.17rem; font-weight: 750; font-variant-nume
   text-align: center;
   pointer-events: none;
 }
-#mote-slots { display: grid; grid-template-columns: repeat(10, 1fr); gap: .35rem; padding: .38rem .48rem; background: var(--panel); border-radius: .45rem; }
+#mote-slots { display: grid; grid-template-columns: repeat(var(--slots, 10), 1fr); gap: .3rem; padding: .38rem .48rem; background: var(--panel); border-radius: .45rem; }
 #mote-slots span { height: .78rem; border: 1px solid var(--border); background: #203445; border-radius: .18rem; }
 #mote-slots .filled { background: #fff6c2; border-color: #ffe58a; box-shadow: 0 0 .58rem #ffe58a75; }
 #carried { display: inline-block; margin-top: .35rem; font-size: .82rem; color: var(--muted); }
@@ -209,6 +216,7 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); }
 .secondary:hover { background: #283365; }
 .setting { display: grid; text-align: left; grid-template-columns: 1fr auto; gap: .4rem; margin: 1.1rem 0; }
 .setting input { grid-column: 1 / -1; width: 100%; accent-color: var(--amber); }
+.setting-toggle input { grid-column: 2; width: 1.15rem; height: 1.15rem; margin: 0; }
 button {
   min-width: 9.5rem;
   min-height: 2.7rem;

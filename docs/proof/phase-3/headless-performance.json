@@ -1,0 +1,24 @@
+{
+  "command": "node src/headless.js --seed 12 --night 3 --ticks 18000 --snapshot-every 600 --out docs/proof/phase-3/full-night.jsonl --scenario docs/proof/phase-3/full-night.scenario.json --inputs docs/proof/phase-3/full-night.inputs.json",
+  "elapsed_ms": 968.88,
+  "node": "v26.13.1",
+  "platform": "win32",
+  "arch": "x64",
+  "release": "10.0.26300",
+  "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+  "end": {
+    "type": "end",
+    "ticks": 18000,
+    "state": "lost",
+    "score": 120
+  },
+  "workload": {
+    "motes": 30,
+    "shades": 10,
+    "drifters": 2,
+    "wind": {
+      "active": true,
+      "dir_deg": 334.3474994134158
+    }
+  }
+}

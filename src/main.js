@@ -1,5 +1,5 @@
 import './game.css'
-import { Simulation, DEFAULT_INPUT, STEP, tuning } from './simulation.js'
+import { Simulation, DEFAULT_INPUT, STEP, fuelOf, tuning } from './simulation.js'
 import { GameView } from './view.js'
 import { NightAudio } from './audio.js'
 
@@ -12,7 +12,7 @@ const secondary = get('secondary-button')
 const menuButton = get('menu-button')
 const settingsPanel = get('settings-panel')
 const seed = 12
-const slotNodes = Array.from({ length: tuning.carry_capacity }, () => document.createElement('span'))
+const slotNodes = Array.from({ length: tuning.capacity_max }, () => document.createElement('span'))
 get('mote-slots').append(...slotNodes)
 
 const movementKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight']
@@ -20,13 +20,15 @@ const actionKeys = ['Space', 'KeyE', 'KeyF', 'ShiftLeft', 'ShiftRight']
 const keys = new Set()
 const pending = new Set()
 const outcomes = new Map()
-const settings = { volume: .5, sensitivity: 1 }
+const ranges = ['volume', 'sensitivity']
+const settings = { volume: .5, sensitivity: 1, contrast: false }
 try {
   const saved = JSON.parse(localStorage.getItem('dao-den-long-settings') ?? '{}')
-  for (const name of Object.keys(settings)) {
+  for (const name of ranges) {
     const input = get(name)
     if (Number.isFinite(saved[name])) settings[name] = Math.max(+input.min, Math.min(+input.max, saved[name]))
   }
+  settings.contrast = saved.contrast === true
 } catch {
   // The defaults also work if storage is unavailable.
 }
@@ -57,8 +59,13 @@ function updateHud() {
   const { player } = sim
   setText('flames', '◆'.repeat(player.flames) + '◇'.repeat(tuning.flames - player.flames))
   get('flames').setAttribute('aria-label', `${player.flames} trên ${tuning.flames} Ngọn Lửa`)
-  setText('carried', `${player.carried} / ${tuning.carry_capacity}`)
-  slotNodes.forEach((slot, index) => slot.classList.toggle('filled', index < player.carried))
+  const capacity = sim.capacity
+  setText('carried', `${player.carried} / ${capacity}`)
+  get('mote-slots').style.setProperty('--slots', capacity)
+  slotNodes.forEach((slot, index) => {
+    slot.hidden = index >= capacity
+    slot.classList.toggle('filled', index < player.carried)
+  })
   setText('score', String(sim.score))
   const seconds = Math.ceil(sim.timeLeft)
   setText('timer', `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`)
@@ -70,11 +77,12 @@ function updateHud() {
   get('dash-ability').classList.toggle('cooling', dashCd > 0)
   get('pulse-ability').classList.toggle('cooling', player.pulseCd > 0 || player.carried < tuning.pulse_cost)
 
-  const nearby = sim.nearbyUnlitLantern()
+  const nearby = sim.nearbyLantern()
   let objective = ''
   if (sim.playerInShelter()) objective = 'Vùng an toàn'
   if (sim.wind.warning) objective = 'Gió mạnh sắp nổi'
-  if (nearby) objective = `E — Nạp ánh sáng (${nearby.deposited}/10)`
+  if (nearby?.lit) objective = `E — Châm dầu (${fuelOf(nearby).toFixed(1).replace('.', ',')}/${tuning.fuel_max})`
+  else if (nearby) objective = `E — Nạp ánh sáng (${nearby.deposited}/${nearby.ever_lit ? tuning.relight_cost : tuning.lantern_cost})`
   if (sim.simTick < hitMessageUntil) objective = 'Mây vừa mất một Ngọn Lửa'
   if (player.respawning > 0) objective = 'Mây đang trở lại điểm xuất phát'
   setText('objective', objective)
@@ -120,7 +128,7 @@ function showMenu() {
   outcomes.clear()
   prepareNight(1)
   showHud(false)
-  openPanel({ caption: 'BA HÒN ĐẢO', title: 'Đảo Đèn Lồng', detail: 'Thắp đèn trên ba hòn đảo trước rạng đông.',
+  openPanel({ caption: 'BA HÒN ĐẢO', title: 'Đảo Đèn Lồng', detail: 'Giữ đèn sáng trên ba hòn đảo tới bình minh.',
     primary: 'Chơi', onPrimary: () => showIntro(1), extra: 'Cài đặt', onExtra: openSettings })
 }
 
@@ -128,7 +136,8 @@ function showIntro(night) {
   screen = 'intro'
   if (sim.night !== night || sim.tick !== 0) prepareNight(night)
   showHud(false)
-  openPanel({ caption: `ĐÊM ${night}`, title: sim.island.name, detail: `Ông Đăng · ${sim.island.advice}`,
+  openPanel({ caption: `ĐÊM ${night}`, title: sim.island.name,
+    detail: `Ông Đăng · Giữ ít nhất ${sim.requiredLit} đèn sáng tới bình minh. ${sim.island.advice}`,
     primary: 'Bắt đầu', onPrimary: beginPlay, menu: true })
 }
 
@@ -157,7 +166,11 @@ function showResult({ result, reason }) {
   const won = result === 'won'
   const night = sim.night
   if (won) outcomes.set(night, sim.score)
-  const message = { all_lit: `Cả ${sim.lanterns.length} đèn đã sáng.`, dawn: 'Rạng đông đã đến.', no_flames: 'Mây đã cạn lửa.' }
+  const message = {
+    dawn_survived: `Mây giữ được ${sim.lanterns.filter(({ lit }) => lit).length} đèn sáng tới bình minh.`,
+    dawn: `Rạng đông đã đến, cần ít nhất ${sim.requiredLit} đèn sáng.`,
+    no_flames: 'Mây đã cạn lửa.',
+  }
   openPanel({
     caption: won ? 'CHIẾN THẮNG' : 'KẾT THÚC', title: won ? `${sim.island.name} đã sáng!` : 'Đêm chưa qua',
     detail: `${message[reason]} Điểm đêm · ${sim.score}`,
@@ -270,7 +283,10 @@ function addControls() {
     showMenu()
   })
   get('settings-back').addEventListener('click', closeSettings)
-  for (const id of Object.keys(settings)) {
+  const saveSettings = () => {
+    try { localStorage.setItem('dao-den-long-settings', JSON.stringify(settings)) } catch {}
+  }
+  for (const id of ranges) {
     const input = get(id)
     const reflect = () => setText(`${id}-value`, `${Math.round(settings[id] * 100)}%`)
     input.value = settings[id]
@@ -279,9 +295,21 @@ function addControls() {
       settings[id] = Number(input.value)
       reflect()
       audio.setVolume(settings.volume)
-      try { localStorage.setItem('dao-den-long-settings', JSON.stringify(settings)) } catch {}
+      saveSettings()
     })
   }
+  const contrast = get('contrast')
+  const applyContrast = () => {
+    game.classList.toggle('accessible-palette', settings.contrast)
+    view.highContrast = settings.contrast
+  }
+  contrast.checked = settings.contrast
+  applyContrast()
+  contrast.addEventListener('change', () => {
+    settings.contrast = contrast.checked
+    applyContrast()
+    saveSettings()
+  })
   window.addEventListener('keydown', (event) => {
     const { code } = event
     if (code === 'Escape' && !settingsPanel.hidden) return closeSettings()

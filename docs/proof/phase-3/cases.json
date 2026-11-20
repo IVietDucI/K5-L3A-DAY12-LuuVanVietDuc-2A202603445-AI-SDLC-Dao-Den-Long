@@ -1,0 +1,119 @@
+{
+  "fuel-threshold": {
+    "night": 1,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/fuel-threshold.scenario.json"
+  },
+  "multi-drain": {
+    "night": 1,
+    "ticks": 138,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/multi-drain.scenario.json"
+  },
+  "pulse-drain": {
+    "night": 1,
+    "ticks": 121,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/pulse-drain.scenario.json",
+    "inputs": "docs/proof/phase-3/pulse-drain.inputs.json"
+  },
+  "refuel-shelter": {
+    "night": 1,
+    "ticks": 31,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/refuel-shelter.scenario.json",
+    "inputs": "docs/proof/phase-3/refuel-shelter.inputs.json"
+  },
+  "refuel-full": {
+    "night": 1,
+    "ticks": 1,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/refuel-full.scenario.json",
+    "inputs": "docs/proof/phase-3/refuel-full.inputs.json"
+  },
+  "relight-cap": {
+    "night": 1,
+    "ticks": 18,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/relight-cap.scenario.json",
+    "inputs": "docs/proof/phase-3/relight-cap.inputs.json"
+  },
+  "capacity-pickup": {
+    "night": 1,
+    "ticks": 10,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/capacity-pickup.scenario.json",
+    "inputs": "docs/proof/phase-3/capacity-pickup.inputs.json"
+  },
+  "dawn-n1": {
+    "night": 1,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/dawn-n1.scenario.json"
+  },
+  "dawn-n2": {
+    "night": 2,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/dawn-n2.scenario.json"
+  },
+  "dawn-n3": {
+    "night": 3,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/dawn-n3.scenario.json"
+  },
+  "dawn-out": {
+    "night": 1,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/dawn-out.scenario.json"
+  },
+  "dawn-light": {
+    "night": 1,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/dawn-light.scenario.json",
+    "inputs": "docs/proof/phase-3/dawn-light.inputs.json"
+  },
+  "pause-fuel": {
+    "night": 1,
+    "ticks": 76,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/pause-fuel.scenario.json",
+    "inputs": "docs/proof/phase-3/pause-fuel.inputs.json"
+  },
+  "wander-targets": {
+    "night": 1,
+    "ticks": 46,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/wander-targets.scenario.json"
+  },
+  "drain-exits": {
+    "night": 1,
+    "ticks": 3,
+    "every": 1,
+    "scenario": "docs/proof/phase-3/drain-exits.scenario.json"
+  },
+  "invalid-target": {
+    "night": 1,
+    "ticks": 1,
+    "every": 1,
+    "error": 2,
+    "scenario": "docs/proof/phase-3/invalid-target.scenario.json"
+  },
+  "full-night": {
+    "night": 3,
+    "ticks": 18000,
+    "every": 600,
+    "scenario": "docs/proof/phase-3/full-night.scenario.json",
+    "inputs": "docs/proof/phase-3/full-night.inputs.json"
+  },
+  "night1-survival": {
+    "night": 1,
+    "ticks": 14400,
+    "every": 600,
+    "inputs": "docs/proof/phase-3/night1-survival.inputs.json"
+  }
+}

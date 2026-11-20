@@ -5,7 +5,7 @@
 
 ---
 
-## Chơi Ba hòn đảo
+## Chơi Đèn cạn dầu
 
 **Lưu Văn Việt Đức · 2A202603445 · L3A**
 
@@ -24,27 +24,41 @@ Mở địa chỉ Vite in ra (thường là `http://localhost:5173/`), bấm **C
 | Space | Nhảy |
 | Shift | Lướt 12 tick, hồi sau 1,5 giây |
 | Kéo chuột trên cảnh | Xoay camera |
-| E | Nạp vào đèn chưa sáng gần nhất trong bán kính XZ 2 m |
+| E | Nạp hoặc châm dầu vào đèn gần nhất còn nhận đom đóm trong bán kính XZ 2 m |
 | F | Tỏa Sáng |
 | Esc hoặc P | Tạm dừng hoặc tiếp tục |
 
-Đảo Bến có 5 đèn và 05:00. Đảo Cau có 6 đèn, 05:30, cầu tre và hai bục nhảy. Đảo Chuông có 7 đèn, 06:00, hai dốc, bục ở tầng 1 và các đợt gió mạnh.
+Giữ Mây còn lửa tới bình minh và duy trì số đèn đang sáng theo ngưỡng của từng Đêm.
 
-Mỗi đèn cần 10 đom đóm và giữ số đã nạp. Vùng an toàn 6 m chặn Bóng Mực. **Tỏa Sáng** tốn 3 đom đóm, hồi 3 giây, tác dụng trong bán kính 3D 5 m, đẩy Bóng Mực 4 m trong 15 tick và làm choáng 2 giây.
+| Đêm | Thời gian | Đèn cần giữ sáng |
+|---|---:|---:|
+| Đảo Bến | 04:00 | 3/5 |
+| Đảo Cau | 04:30 | 4/6 |
+| Đảo Chuông | 05:00 | 5/7 |
+
+Thắp lần đầu cần 10 đom đóm, thắp lại cần 5. Đèn vừa thắp có 100 dầu, hao 1 mỗi giây. Mỗi đom đóm châm thêm 10 dầu tới trần 100. Dưới 30 dầu, đèn chớp và mất vùng an toàn 6 m. Bóng Mực có thể tiến tới đèn yếu và hút thêm 5 dầu/giây mỗi con. **Tỏa Sáng** tốn 3 đom đóm, hồi 3 giây, tác dụng trong bán kính 3D 5 m, ngắt hút dầu, đẩy Bóng Mực 4 m và làm choáng 2 giây.
 
 Gió Lạc có thể cướp 3 đom đóm. Tỏa Sáng xua Gió Lạc hoặc làm nó nhả đồ đã cướp. Bùa Gió cho chạy 7,2 m/s và lướt liên tiếp bằng lần nhấn mới trong 10 giây. Bóng Mực đánh mất một lửa và làm rơi nửa túi. Rơi xuống dưới Y = −10 làm mất một lửa và cả túi, sau đó hồi sinh sau 1 giây nếu còn lửa.
 
-**Điểm.** +10 mỗi đom đóm nạp, +100 mỗi đèn thắp và +5 mỗi Bóng Mực trúng Tỏa Sáng. Khi thắng, nhận thêm 2 điểm mỗi giây nguyên và 50 điểm mỗi lửa còn lại. Màn Bình Minh tính tổng ba đêm thắng. Có thể đổi âm lượng và độ nhạy chuột trong **Cài đặt**.
+Túi bắt đầu ở 10 ô và tăng 2 mỗi lần thắp, tối đa 20. **Cài đặt** có âm lượng, độ nhạy chuột và **Bảng màu dễ phân biệt**.
 
-## Kiểm chứng Phase 2
+**Điểm.** +5 mỗi đom đóm nạp hoặc châm, +100 lần thắp đầu, +40 lần thắp lại. Tỏa Sáng cho +15 trên mỗi Bóng Mực đang hút dầu hoặc +5 ở trạng thái khác. Khi thắng, thưởng 50 cộng phần nguyên dầu của mỗi đèn đang sáng và 50 mỗi lửa còn. Màn Bình Minh tính tổng điểm các đêm thắng.
+
+## Kiểm chứng Phase 3
 
 ```sh
 npm test
 npm run build
-node src/headless.js --seed 12 --night 3 --scenario docs/proof/phase-2/pad-chuong.scenario.json --inputs docs/proof/phase-2/pad-chuong.inputs.json --ticks 55 --out trial.jsonl --snapshot-every 5
+node docs/proof/phase-3/replay.mjs
 ```
 
-CLI và giao diện dùng chung simulation 60 tick/giây. CLI nhận `--night 1`, `2` hoặc `3`. Khi tạm dừng, `tick` tăng và `sim_tick` đứng yên. Xem [Test Contract v1.1](game.contract.json), [bảng kiểm chứng](docs/proof/phase-2/README.md) và [ghi chú Phase 2](docs/notes/phase-2.md). [Bằng chứng Phase 1](docs/proof/phase-1/README.md) dùng với tag `phase-1`.
+CLI và giao diện dùng chung simulation 60 tick/giây. CLI nhận `--night 1`, `2` hoặc `3`. Khi tạm dừng, `tick` tăng còn `sim_tick` và dầu đứng yên.
+
+```sh
+node src/headless.js --seed 12 --night 1 --scenario docs/proof/phase-3/refuel-shelter.scenario.json --inputs docs/proof/phase-3/refuel-shelter.inputs.json --ticks 31 --out trial.jsonl --snapshot-every 1
+```
+
+[Test Contract v1.2](game.contract.json) · [Changelog](CHANGELOG.md) · [ADR](docs/adr/0001-lantern-fuel-and-dawn.md) · [Bảng kiểm chứng](docs/proof/phase-3/README.md) · [Ghi chú Phase 3](docs/notes/phase-3.md)
 
 ## Tài liệu của lab
 

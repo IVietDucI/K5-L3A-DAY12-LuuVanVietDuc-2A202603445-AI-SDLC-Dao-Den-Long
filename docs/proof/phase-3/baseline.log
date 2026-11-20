@@ -1,0 +1,34 @@
+
+> dao-den-long@0.1.0 test
+> node --test
+
+✔ v1.1 manifests night timing, geometry and arrays for all three nights (413.648ms)
+✔ CP1 movement regression preserves initial state and snapshot cadence with v1.1 tuning (77.4301ms)
+✔ pickup requires XZ <= 1 and Y gap <= 1.5 without scoring on pickup (70.4191ms)
+✔ CP1 deposit regression honors ties, edge presses, partial amounts and the new score (82.9274ms)
+✔ elevation does not affect the inclusive 2 m XZ deposit while Pulse uses 3D (56.7622ms)
+✔ the final inclusive-range deposit wins at dawn unless no flames remain (280.9412ms)
+✔ pause counts wall ticks while freezing movement, cooldowns, invulnerability and TTL (62.731ms)
+✔ fall ignores invulnerability, loses the entire bag once, then respawns after 60 ticks (59.1486ms)
+✔ Đảo Cau bridge bounds and launch preserve velocity until landing on the other island (127.3075ms)
+✔ Đảo Chuông levels, both ramps, tower wall and launch produce the correct landings (140.1471ms)
+✔ wind activates at simulation tick 1800 and delivers 2 m/s for 300 ticks (70.2371ms)
+✔ Pulse locks 3D targets, pushes 4 m in 15 ticks and resets a stunned shade (118.9039ms)
+✔ Bóng Mực evicts to the safe boundary within 30 ticks and cannot cross it (57.8678ms)
+✔ shade contact honors ID, height and immunity, with 60 recoil steps and drop TTL (58.6458ms)
+✔ CP1 configured shade hits on tick 1, hits at immunity expiry and causes flame loss (59.3524ms)
+✔ Gió Lạc steals before the hit, drops recovered motes on Pulse and disappears on schedule (120.6288ms)
+✔ Bùa Gió permits an edge-pressed second dash, boosts run and respawns after 2700 ticks (73.9919ms)
+✔ spawn schedules differ by night and new motes and shades only act next tick (418.5938ms)
+✔ errors return code 2 for v1.1 controls and for the retained CP1 invalid fixtures (149.4136ms)
+✔ a full 21,600-tick headless run stays deterministic under full spawn and wind load (508.8488ms)
+✔ repeating the no-scenario Night 1 run preserves spawn IDs and bytes (134.8044ms)
+✔ the default Đảo Bến can still be won with Phase 2 tuning and active spawns (122.714ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3453.1995

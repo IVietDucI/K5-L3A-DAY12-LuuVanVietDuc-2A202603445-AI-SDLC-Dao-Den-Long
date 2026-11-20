@@ -1,0 +1,57 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      6,
+      0,
+      0
+    ]
+  },
+  "lanterns": [
+    {
+      "id": "L1",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "lit": true,
+      "fuel": 25
+    },
+    {
+      "id": "L2",
+      "pos": [
+        -10,
+        0,
+        0
+      ],
+      "lit": true,
+      "fuel": 25
+    }
+  ],
+  "shades": [
+    {
+      "id": "near",
+      "pos": [
+        0,
+        0.85,
+        0
+      ],
+      "state": "drain",
+      "target_lantern_id": "L1"
+    },
+    {
+      "id": "far",
+      "pos": [
+        -12.001,
+        0.85,
+        0
+      ],
+      "state": "drain",
+      "target_lantern_id": "L2"
+    }
+  ]
+}

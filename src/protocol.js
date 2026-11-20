@@ -1,4 +1,4 @@
-import { DRIFTER_STATES, SHADE_STATES } from './simulation.js'
+import { DRIFTER_STATES, SHADE_STATES, tuning } from './simulation.js'
 
 const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
 const isCount = (value) => Number.isSafeInteger(value) && value >= 0
@@ -62,7 +62,9 @@ export function validateScenario(value, island) {
   if ('player' in value) {
     if (!isObject(value.player)) throw new Error('scenario player must be an object')
     if ('pos' in value.player && !vector(value.player.pos, 3)) throw new Error('scenario player.pos must be [x,y,z]')
-    for (const field of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) checkCount(value.player, field)
+    for (const field of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks', 'successful_lights']) {
+      checkCount(value.player, field)
+    }
   }
   if ('motes' in value) {
     if (!Array.isArray(value.motes)) throw new Error('scenario motes must be an array')
@@ -72,7 +74,15 @@ export function validateScenario(value, island) {
       checkCount(mote, 'ttl_ticks')
     })
   }
-  if ('shades' in value) checkEntities(value.shades, 'shades', (shade) => checkActor(shade, 'shade', SHADE_STATES))
+  const lanternIds = island.lanterns.map((_, i) => `L${i + 1}`)
+  if ('shades' in value) {
+    checkEntities(value.shades, 'shades', (shade) => {
+      checkActor(shade, 'shade', SHADE_STATES)
+      if ('target_lantern_id' in shade && !lanternIds.includes(shade.target_lantern_id)) {
+        throw new Error('scenario shade.target_lantern_id is unknown')
+      }
+    })
+  }
   if ('drifters' in value) {
     checkEntities(value.drifters, 'drifters', (drifter) => {
       checkActor(drifter, 'drifter', DRIFTER_STATES)
@@ -91,7 +101,7 @@ export function validateScenario(value, island) {
   }
   if ('lanterns' in value) {
     if (!Array.isArray(value.lanterns)) throw new Error('scenario lanterns must be an array')
-    const allowed = new Set(island.lanterns.map((_, i) => `L${i + 1}`))
+    const allowed = new Set(lanternIds)
     for (const lantern of value.lanterns) {
       if (!isObject(lantern) || !allowed.delete(lantern.id)) throw new Error('scenario lantern ID is unknown or repeated')
       if ('pos' in lantern && !vector(lantern.pos, 3)) throw new Error('scenario lantern.pos must be [x,y,z]')
@@ -99,6 +109,10 @@ export function validateScenario(value, island) {
         throw new Error('scenario lantern.deposited must be a non-negative integer')
       }
       if ('lit' in lantern && typeof lantern.lit !== 'boolean') throw new Error('scenario lantern.lit must be a boolean')
+      if ('ever_lit' in lantern && typeof lantern.ever_lit !== 'boolean') throw new Error('scenario lantern.ever_lit must be a boolean')
+      if ('fuel' in lantern && (!Number.isFinite(lantern.fuel) || lantern.fuel < 0 || lantern.fuel > tuning.fuel_max)) {
+        throw new Error(`scenario lantern.fuel must be a number in [0,${tuning.fuel_max}]`)
+      }
     }
   }
   return value

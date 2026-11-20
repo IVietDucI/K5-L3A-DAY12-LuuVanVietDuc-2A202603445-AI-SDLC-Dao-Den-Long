@@ -1,12 +1,12 @@
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
-import { STEP, tuning } from './simulation.js'
+import { STEP, fuelOf, isWeak, tuning } from './simulation.js'
 import { surfacesAt } from './islands.js'
 
 const palette = {
   night: 0x0e1430, fog: 0x1b2350, grass: 0x2f5d50, sand: 0xc9b48a, wood: 0x6b4a2f, sea: 0x12384a,
   amber: 0xffb347, core: 0xffe9b0, unlit: 0x5b5f6e, mote: 0xfff6c2, halo: 0xffe58a,
-  ink: 0x120a1a, violet: 0x7a3cff, stunned: 0x3a3450, shirt: 0xe8e2d0,
+  ink: 0x120a1a, violet: 0x7a3cff, contrastBlue: 0x00b3ff, stunned: 0x3a3450, shirt: 0xe8e2d0,
   vermilion: 0xc8102e, gold: 0xf2c14e, drifter: 0x8fa3b8,
 }
 const amber = palette.amber
@@ -114,22 +114,41 @@ function makeIsland(scene, island) {
 
 function lanternFrameGeometry() {
   const frame = [cylinder(.13, .17, 2, 10).translate(0, 1.21, 0),
-    cylinder(.53, .45, .13, 8).translate(0, 2.22, 0), cylinder(.11, .72, .39, 8).translate(0, 3.13, 0)]
+    cylinder(.53, .45, .13, 8).translate(0, 2.22, 0)]
   const geometry = mergeGeometries(frame)
   for (const piece of frame) piece.dispose()
   return geometry
 }
 
-function makeLantern(scene, markerLayer, lantern, frame, wood) {
+function lanternTearGeometry() {
+  const shape = new THREE.Shape()
+  shape.moveTo(-.16, .27)
+  for (const [x, y] of [[-.025, .12], [-.08, .027], [.1, -.21], [.014, -.06],
+    [.09, -.01], [.045, .10]]) shape.lineTo(x, y)
+  shape.closePath()
+  const face = new THREE.ShapeGeometry(shape).translate(0, 0, .51)
+  const sides = Array.from({ length: 4 }, (_, i) => face.clone().rotateY(Math.PI / 8 + i * Math.PI / 2))
+  const tear = mergeGeometries(sides)
+  face.dispose()
+  for (const side of sides) side.dispose()
+  return tear
+}
+
+function makeLantern(scene, markerLayer, lantern, frame, wood, roof, tearShape) {
   const root = new THREE.Group()
   root.position.fromArray(lantern.pos)
   scene.add(root)
   const stone = material(0x536966)
   const paper = material(palette.unlit)
-  const core = mesh(root, cylinder(.42, .42, .63, 8), basic(palette.core), 0, 2.62, 0)
+  const casing = new THREE.Group()
+  casing.position.y = 2.62
+  root.add(casing)
+  const core = mesh(casing, cylinder(.42, .42, .63, 8), basic(palette.core), 0, 0, 0)
   mesh(root, cylinder(.83, .97, .21, 8), stone, 0, .105, 0)
   mesh(root, frame, wood, 0, 0, 0)
-  mesh(root, cylinder(.53, .53, .68, 8), paper, 0, 2.62, 0)
+  mesh(casing, cylinder(.53, .53, .68, 8), paper, 0, 0, 0)
+  mesh(casing, roof, wood, 0, .51, 0)
+  const tear = mesh(casing, tearShape, basic(palette.shirt), 0, 0, 0)
   const shelter = mesh(root, planeRing(tuning.safe_radius - .06, tuning.safe_radius),
     new THREE.MeshBasicMaterial({ color: amber, transparent: true, opacity: .45, depthWrite: false }), 0, .023, 0)
   const glow = mesh(root, new THREE.SphereGeometry(.89, 12, 8),
@@ -137,9 +156,16 @@ function makeLantern(scene, markerLayer, lantern, frame, wood) {
 
   const label = document.createElement('span')
   label.className = 'marker'
-  label.textContent = lantern.id
+  label.dataset.lantern = lantern.id
+  const warning = document.createElement('span')
+  warning.className = 'marker-warning'
+  warning.textContent = '⚠'
+  const meter = document.createElement('span')
+  meter.className = 'marker-meter'
+  meter.append(document.createElement('i'))
+  label.append(warning, document.createTextNode(lantern.id), meter)
   markerLayer.append(label)
-  return { paper, core, shelter, glow, label, lit: null }
+  return { paper, core, shelter, glow, label, warning, meter, casing, tear, lit: null }
 }
 
 function makePlayer(scene) {
@@ -174,12 +200,12 @@ function makeShade(scene) {
   body.scale.set(.86, 1.22, .79)
   const outline = mesh(root, body.geometry, basic(palette.violet, { side: THREE.BackSide }), 0, 0, 0)
   outline.scale.copy(body.scale).multiplyScalar(1.07)
-  const eye = basic(0xffc9fc)
+  const eye = basic(palette.violet)
   for (const x of [-.16, .16]) {
     mesh(root, new THREE.SphereGeometry(.061, 8, 6), eye, x, .13, .417)
   }
   scene.add(root)
-  return { root, ink }
+  return { root, ink, outline: outline.material, eye }
 }
 
 function drawMap(canvas, ctx, sim, yaw) {
@@ -274,7 +300,9 @@ export class GameView {
     makeIsland(this.scene, sim.island)
     const frame = lanternFrameGeometry()
     const wood = material(palette.wood)
-    this.lanterns = sim.lanterns.map((lantern) => makeLantern(this.scene, this.markerLayer, lantern, frame, wood))
+    const roof = cylinder(.11, .72, .39, 8)
+    const tear = lanternTearGeometry()
+    this.lanterns = sim.lanterns.map((lantern) => makeLantern(this.scene, this.markerLayer, lantern, frame, wood, roof, tear))
     this.motes = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.17, 0), basic(palette.mote), 64)
     this.halos = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.28, 0),
       basic(palette.halo, { transparent: true, opacity: .22, depthWrite: false }), 64)
@@ -341,11 +369,14 @@ export class GameView {
 
     for (const shade of sim.shades) {
       if (!this.shades.has(shade.id)) this.shades.set(shade.id, makeShade(this.scene))
-      const { root, ink } = this.shades.get(shade.id)
+      const { root, ink, outline, eye } = this.shades.get(shade.id)
       root.position.fromArray(shade.pos)
       root.position.y += .12 * Math.sin(t * 4 + root.id)
       root.rotation.y = Math.atan2(x - shade.pos[0], z - shade.pos[2])
       ink.color.setHex(shade.state === 'stunned' ? palette.stunned : palette.ink)
+      const edgeColor = this.highContrast ? palette.contrastBlue : palette.violet
+      outline.color.setHex(edgeColor)
+      eye.color.setHex(edgeColor)
     }
     const drifterIds = new Set(sim.drifters.map(({ id }) => id))
     for (const [id, ribbon] of this.drifters) {
@@ -405,15 +436,29 @@ export class GameView {
         view.lit = lantern.lit
         view.paper.color.setHex(lantern.lit ? amber : palette.unlit)
         view.paper.emissive.setHex(lantern.lit ? amber : 0)
-        view.paper.emissiveIntensity = lantern.lit ? .65 : 0
         view.paper.transparent = lantern.lit
         view.paper.opacity = lantern.lit ? .66 : 1
-        view.shelter.visible = lantern.lit
         view.core.visible = view.glow.visible = lantern.lit
+        view.casing.scale.y = lantern.lit ? 1 : .8
+        view.casing.position.y = lantern.lit ? 2.62 : 2.552
+        view.tear.visible = !lantern.lit
+        view.meter.hidden = !lantern.lit
         view.label.classList.toggle('lit', lantern.lit)
       }
+      const weak = isWeak(lantern)
+      const blink = weak ? .42 + .58 * (1 + Math.cos(t * Math.PI * 2)) / 2 : 1
+      view.shelter.visible = lantern.lit && !weak
+      view.paper.emissiveIntensity = lantern.lit ? .65 * blink : 0
+      view.glow.material.opacity = .13 * blink
+      view.core.material.color.setHex(palette.core).multiplyScalar(blink)
+      view.label.classList.toggle('low-fuel', weak)
+      view.warning.hidden = !weak
+      if (lantern.lit) {
+        view.meter.style.setProperty('--fuel', fuelOf(lantern) / tuning.fuel_max)
+        view.meter.style.setProperty('--blink-opacity', blink)
+      }
       const point = this.projection.fromArray(lantern.pos)
-      point.y += 3.69
+      point.y += lantern.lit ? 3.69 : 3.48
       point.project(this.camera)
       view.label.hidden = Math.abs(point.x) >= .98 || Math.abs(point.y) >= .94 || Math.abs(point.z) >= 1
       if (!view.label.hidden) {

@@ -1,0 +1,4 @@
+node src/headless.js --seed 12 --night 1 --ticks 1 --snapshot-every 1 --out docs/proof/phase-3/invalid-target.jsonl --scenario docs/proof/phase-3/invalid-target.scenario.json
+exit=2
+docs/proof/phase-3/invalid-target.scenario.json: scenario shade.target_lantern_id is unknown
+node src/headless.js --seed <int> --night <1|2|3> [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]

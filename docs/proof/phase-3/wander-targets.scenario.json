@@ -1,0 +1,62 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      0,
+      0,
+      16
+    ]
+  },
+  "lanterns": [
+    {
+      "id": "L1",
+      "pos": [
+        -5,
+        0,
+        0
+      ],
+      "lit": true,
+      "fuel": 20
+    },
+    {
+      "id": "L2",
+      "pos": [
+        5,
+        0,
+        0
+      ],
+      "lit": true,
+      "fuel": 20
+    },
+    {
+      "id": "L3",
+      "pos": [
+        0.2,
+        0,
+        0
+      ]
+    }
+  ],
+  "shades": [
+    {
+      "id": "W",
+      "pos": [
+        0,
+        0.85,
+        0
+      ]
+    },
+    {
+      "id": "C",
+      "pos": [
+        0,
+        0.85,
+        0.1
+      ],
+      "state": "chase"
+    }
+  ]
+}

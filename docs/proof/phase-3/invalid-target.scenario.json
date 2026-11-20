@@ -1,0 +1,14 @@
+{
+  "shades": [
+    {
+      "id": "S1",
+      "pos": [
+        1,
+        0.85,
+        0
+      ],
+      "state": "drain",
+      "target_lantern_id": "L6"
+    }
+  ]
+}

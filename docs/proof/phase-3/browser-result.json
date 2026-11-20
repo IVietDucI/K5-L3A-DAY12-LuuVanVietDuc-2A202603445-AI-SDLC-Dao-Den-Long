@@ -1,0 +1,47 @@
+{
+  "version": "Chrome/157.0.8103.79",
+  "platform": "win32",
+  "release": "10.0.26300",
+  "arch": "x64",
+  "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+  "backend": "swiftshader",
+  "width": 1280,
+  "height": 720,
+  "contrasting": {
+    "shade": {
+      "outline": "00b3ff",
+      "eye": "00b3ff"
+    },
+    "timer": "rgb(255, 255, 255)",
+    "icon": "\"⚠ \"",
+    "oilWarning": "rgb(255, 255, 255)"
+  },
+  "paused": {
+    "oilUnits": 1419,
+    "blink": "0.43419361027440545"
+  },
+  "extinguished": {
+    "scaleY": 0.8,
+    "tear": true,
+    "shelter": false,
+    "meter": false,
+    "warning": false,
+    "blink": "1"
+  },
+  "relit": {
+    "scaleY": 1,
+    "tear": false,
+    "shelter": true,
+    "meter": true,
+    "warning": false,
+    "blink": "1"
+  },
+  "capacityAfterRelight": 12,
+  "capacityNextNight": 10,
+  "allLitContinues": true,
+  "gameOver": {
+    "result": "won",
+    "reason": "dawn_survived"
+  },
+  "contrastPersists": true
+}

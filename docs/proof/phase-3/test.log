@@ -1,0 +1,46 @@
+
+> dao-den-long@0.1.0 test
+> node --test
+
+✔ v1.2 manifests night timing, geometry and arrays for all three nights (1071.934ms)
+✔ CP1 movement regression preserves initial state and snapshot cadence (243.5892ms)
+✔ pickup requires XZ <= 1 and Y gap <= 1.5 without scoring on pickup (192.4655ms)
+✔ CP1 deposit regression honors ties, edge presses, partial amounts and the new score (215.0276ms)
+✔ elevation does not affect the inclusive 2 m XZ deposit while Pulse uses 3D (185.6511ms)
+✔ the final inclusive-range deposit wins at dawn unless no flames remain (606.571ms)
+✔ pause counts wall ticks while freezing movement, cooldowns, invulnerability and TTL (143.8276ms)
+✔ fall ignores invulnerability, loses the entire bag once, then respawns after 60 ticks (108.0485ms)
+✔ Đảo Cau bridge bounds and launch preserve velocity until landing on the other island (210.6449ms)
+✔ Đảo Chuông levels, both ramps, tower wall and launch produce the correct landings (201.3444ms)
+✔ wind activates at simulation tick 1800 and delivers 2 m/s for 300 ticks (130.7414ms)
+✔ Pulse locks 3D targets, pushes 4 m in 15 ticks and resets a stunned shade (192.8559ms)
+✔ Bóng Mực evicts to the safe boundary within 30 ticks and cannot cross it (84.9382ms)
+✔ shade contact honors ID, height and immunity, with 60 recoil steps and drop TTL (90.236ms)
+✔ CP1 configured shade hits on tick 1, hits at immunity expiry and causes flame loss (92.4646ms)
+✔ Gió Lạc steals before the hit, drops recovered motes on Pulse and disappears on schedule (188.908ms)
+✔ Bùa Gió permits an edge-pressed second dash, boosts run and respawns after 2700 ticks (113.9671ms)
+✔ spawn schedules differ by night and new motes and shades only act next tick (650.9604ms)
+✔ errors return code 2 for v1.1 controls and for the retained CP1 invalid fixtures (250.4182ms)
+✔ a full 18,000-tick headless run stays deterministic under full spawn and wind load (1351.3585ms)
+✔ repeating the no-scenario Night 1 run preserves spawn IDs and bytes (227.0629ms)
+✔ fuel at exactly 30 is safe and the next fuel unit below 30 is not (218.0094ms)
+✔ two drains stack with natural decay, report once per 60 active ticks, and extinguish the lamp (402.8388ms)
+✔ Pulse stops future drain ticks and scores 15 for a drainer plus 5 for another shade (290.405ms)
+✔ refueling stops drain, restores shelter, and expels the shade without damage (240.9863ms)
+✔ refuel uses exact missing fuel, clamps to 100 and skips a full lamp (217.5577ms)
+✔ a light that goes out may relight in the same tick and contributes to the capacity cap (198.7864ms)
+✔ a scenario light has fuel and history but adds no capacity; pickups honor capacity after a successful light (216.3295ms)
+✔ all 3 dawn thresholds use live lamps and exact remaining fuel for the winning bonus (722.6363ms)
+✔ pausing freezes fuel and the scheduled drain report (129.9987ms)
+✔ wander prefers a weak lamp and breaks ties by ID while chase keeps tracking Mây (101.9881ms)
+✔ drain exits on player radius 6 or when the target moves outside its 2 m range (112.6923ms)
+✔ a scenario targeting a nonexistent lamp is rejected as a CLI input error (94.3158ms)
+✔ the default Đảo Bến can be maintained until dawn under v1.2 rules (368.3447ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7185.2532

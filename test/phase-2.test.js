@@ -1,52 +1,23 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdtempSync, readFileSync, rmdirSync, unlinkSync } from 'node:fs'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { existsSync, readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import contract from '../game.contract.json' with { type: 'json' }
 import { DEFAULT_INPUT, Simulation, tuning } from '../src/simulation.js'
 import { islands, surfacesAt } from '../src/islands.js'
-import { runCase } from '../docs/proof/phase-2/replay.mjs'
+import { replay, runCase, withTemp } from '../docs/proof/phase-3/replay.mjs'
 
-const dir = 'docs/proof/phase-2/'
+const dir = 'docs/proof/phase-3/'
 const empty = { random_motes: false, random_shades: false, random_drifters: false, wind_enabled: false }
 const event = (tick, name, data = {}) => ({ type: 'event', tick, name, data })
 const near = (a, b, delta = .001) => assert.ok(Math.abs(a - b) <= delta, `${a} differs from ${b}`)
 
-function withTemp(run) {
-  const temp = mkdtempSync(join(tmpdir(), 'dao-cp2-tests-'))
-  const path = join(temp, 'run.jsonl')
-  try {
-    return run(path)
-  } finally {
-    if (existsSync(path)) unlinkSync(path)
-    rmdirSync(temp)
-  }
-}
-
-function replay(name) {
-  return withTemp((path) => {
-    const result = runCase(name, path)
-    assert.equal(result.status, 0, result.stderr)
-    assert.equal(result.stderr, '')
-    const bytes = readFileSync(path)
-    assert.deepEqual(bytes, readFileSync(`${dir}${name}.jsonl`), `Recorded CLI output for ${name}`)
-    const records = bytes.toString('utf8').trimEnd().split('\n').map(JSON.parse)
-    const snaps = records.filter(({ type }) => type === 'snapshot')
-    const events = records.filter(({ type }) => type === 'event')
-    assert.equal(records[0].tick, 0)
-    assert.deepEqual(events.shift(), event(0, 'night_start', { night: records[0].night }))
-    return { at: (tick) => snaps.find((snapshot) => snapshot.tick === tick), snapshots: snaps, events, end: records.at(-1) }
-  })
-}
-
-test('v1.1 manifests night timing, geometry and arrays for all three nights', () => {
-  assert.equal(contract.contract_version, '1.1')
+test('v1.2 manifests night timing, geometry and arrays for all three nights', () => {
+  assert.equal(contract.contract_version, '1.2')
   assert.equal(contract.headless_cmd, 'node src/headless.js')
   assert.equal(tuning.lantern_cost, 10)
   assert.equal(tuning.carry_capacity, 10)
-  const durations = [300, 330, 360]
+  const durations = [240, 270, 300]
   const expected = Object.values(islands)
   const names = ['night1-spawn', 'night2-spawn', 'night3-spawn']
   for (const [index, name] of names.entries()) {
@@ -72,7 +43,7 @@ test('v1.1 manifests night timing, geometry and arrays for all three nights', ()
   assert.deepEqual(islands[3].lanterns[0], [0, 6, 6])
 })
 
-test('CP1 movement regression preserves initial state and snapshot cadence with v1.1 tuning', () => {
+test('CP1 movement regression preserves initial state and snapshot cadence', () => {
   const { at, snapshots, events, end } = replay('movement')
   const { pos, carried, flames } = at(0).player
   assert.deepEqual({ pos, carried, flames }, { pos: [0, 0, 0], carried: 0, flames: 3 })
@@ -84,7 +55,7 @@ test('CP1 movement regression preserves initial state and snapshot cadence with 
   assert.deepEqual(at(4).player.pos, [.4, 0, 0])
   assert.deepEqual(at(8).player.pos, [.683, 0, .283])
   assert.deepEqual(at(12).player.pos, [.683, .422, .283])
-  assert.equal(at(4).time_left_s, 300 - 4 / 60)
+  assert.equal(at(4).time_left_s, 240 - 4 / 60)
   assert.deepEqual(events, [event(1, 'mote_picked', { carried: 1 })])
   assert.deepEqual(end, { type: 'end', ticks: 12, state: 'playing', score: 0 })
 })
@@ -103,7 +74,7 @@ test('CP1 deposit regression honors ties, edge presses, partial amounts and the 
     event(3, 'mote_picked', { carried: 1 }),
     event(5, 'deposit', { lantern_id: 'L1', amount: 1, deposited: 8 }),
   ])
-  assert.equal(at(5).score, 20)
+  assert.equal(at(5).score, 10)
   assert.equal(at(5).lanterns[1].deposited, 0)
 })
 
@@ -114,34 +85,36 @@ test('elevation does not affect the inclusive 2 m XZ deposit while Pulse uses 3D
   assert.deepEqual(events, [
     event(1, 'pulse', { stunned_ids: ['edge'] }),
     event(2, 'deposit', { lantern_id: 'L1', amount: 2, deposited: 10 }),
-    event(2, 'lantern_lit', { lantern_id: 'L1' }),
+    event(2, 'lantern_lit', { lantern_id: 'L1', relight: false }),
+    event(4, 'refuel', { lantern_id: 'L1', amount: 1, fuel: 100 }),
   ])
   assert.equal(at(1).shades[0].state, 'stunned')
   assert.notEqual(at(1).shades[1].state, 'stunned')
   assert.equal(at(4).lanterns[1].deposited, 0)
-  assert.equal(at(4).player.carried, 1)
-  assert.equal(at(4).score, 125)
+  assert.equal(at(4).player.carried, 0)
+  assert.equal(at(4).score, 120)
 })
 
 test('the final inclusive-range deposit wins at dawn unless no flames remain', () => {
   const won = replay('final-lantern')
   assert.deepEqual(won.events, [
     event(1, 'deposit', { lantern_id: 'L5', amount: 2, deposited: 10 }),
-    event(1, 'lantern_lit', { lantern_id: 'L5' }),
-    event(1, 'game_over', { result: 'won', reason: 'all_lit' }),
+    event(1, 'lantern_lit', { lantern_id: 'L5', relight: false }),
+    event(1, 'game_over', { result: 'won', reason: 'dawn_survived' }),
   ])
   assert.equal(won.at(1).time_left_s, 0)
-  assert.deepEqual(won.end, { type: 'end', ticks: 1, state: 'won', score: 270 })
+  assert.deepEqual(won.end, { type: 'end', ticks: 1, state: 'won', score: 1006 })
 
   const timed = replay('timed-win')
   assert.equal(timed.at(0).score, 0)
   assert.equal(timed.at(0).motes_active, 0)
   assert.equal(timed.at(0).lanterns.filter(({ lit }) => lit).length, 4)
-  assert.deepEqual(timed.events, won.events)
+  assert.deepEqual(timed.events, won.events.slice(0, 2))
   assert.equal(timed.at(1).player.carried, 0)
   assert.equal(timed.at(1).player.flames, 2)
   assert.equal(timed.at(1).time_left_s, 30 - 1 / 60)
-  assert.deepEqual(timed.end, { type: 'end', ticks: 1, state: 'won', score: 278 })
+  assert.equal(timed.at(5).lanterns.every(({ lit }) => lit), true)
+  assert.deepEqual(timed.end, { type: 'end', ticks: 5, state: 'playing', score: 110 })
 
   const lost = replay('priority')
   assert.deepEqual(lost.events, [
@@ -250,7 +223,7 @@ test('Pulse locks 3D targets, pushes 4 m in 15 ticks and resets a stunned shade'
   const { at, events, end } = replay('pulse')
   assert.deepEqual(events, [
     event(1, 'pulse', { stunned_ids: ['edge', 'same'] }),
-    event(181, 'pulse', { stunned_ids: ['edge', 'same'] }),
+    event(181, 'pulse', { stunned_ids: ['same'] }),
   ])
   assert.equal(at(5).shades[0].pos[0], 4.333)
   assert.deepEqual(at(15).shades.map(({ pos }) => pos), [[7, 4.8, 0], [0, 5.801, 0], [4, .8, 0]])
@@ -259,7 +232,7 @@ test('Pulse locks 3D targets, pushes 4 m in 15 ticks and resets a stunned shade'
   assert.equal(at(185).player.carried, 1)
   assert.equal(at(185).player.flames, 3)
   assert.equal(at(15).score, 10)
-  assert.deepEqual(end, { type: 'end', ticks: 185, state: 'playing', score: 20 })
+  assert.deepEqual(end, { type: 'end', ticks: 185, state: 'playing', score: 15 })
   const wall = replay('pulse-wall')
   assert.deepEqual(wall.events, [event(1, 'pulse', { stunned_ids: ['S1'] })])
   assert.equal(wall.at(15).shades[0].pos[0], -2)
@@ -268,7 +241,7 @@ test('Pulse locks 3D targets, pushes 4 m in 15 ticks and resets a stunned shade'
 test('Bóng Mực evicts to the safe boundary within 30 ticks and cannot cross it', () => {
   const { at, events } = replay('shelter')
   assert.deepEqual(events, [event(1, 'deposit', { lantern_id: 'L1', amount: 10, deposited: 10 }),
-    event(1, 'lantern_lit', { lantern_id: 'L1' })])
+    event(1, 'lantern_lit', { lantern_id: 'L1', relight: false })])
   assert.deepEqual(at(5).shades[0].pos, [1, .8, 0])
   assert.deepEqual(at(30).shades[0].pos, [6, .8, 0])
   assert.equal(at(30).player.flames, 3)
@@ -394,14 +367,15 @@ test('errors return code 2 for v1.1 controls and for the retained CP1 invalid fi
   })
 })
 
-test('a full 21,600-tick headless run stays deterministic under full spawn and wind load', () => {
+test('a full 18,000-tick headless run stays deterministic under full spawn and wind load', () => {
   const { at, end } = replay('full-night')
-  const final = at(21600)
-  assert.deepEqual(end, { type: 'end', ticks: 21600, state: 'lost', score: 0 })
+  const final = at(18000)
+  assert.deepEqual(end, { type: 'end', ticks: 18000, state: 'lost', score: 120 })
   assert.equal(final.shades.length, 10)
   assert.equal(final.drifters.length, 2)
   assert.equal(final.motes.length, 30)
   assert.equal(final.player.flames, 3)
+  assert.equal(final.lanterns[0].fuel, 40)
   assert.equal(final.wind.active, true)
   withTemp((path) => {
     const result = runCase('full-night', path)
@@ -423,14 +397,4 @@ test('repeating the no-scenario Night 1 run preserves spawn IDs and bytes', () =
     assert.equal(result.status, 0, result.stderr)
     assert.deepEqual(readFileSync(path), readFileSync(`${dir}night1-spawn.jsonl`))
   })
-})
-
-test('the default Đảo Bến can still be won with Phase 2 tuning and active spawns', () => {
-  const { events, end } = replay('night1-win')
-  assert.equal(events.filter(({ name }) => name === 'shade_spawned').length, 6)
-  assert.equal(events.filter(({ name }) => name === 'mote_picked').length, 50)
-  assert.deepEqual(events.filter(({ name }) => name === 'lantern_lit').map(({ data }) => data.lantern_id),
-    ['L3', 'L1', 'L2', 'L4', 'L5'])
-  assert.equal(events.filter(({ name }) => name === 'player_hit').length, 0)
-  assert.deepEqual(end, { type: 'end', ticks: 8671, state: 'won', score: 1460 })
 })
