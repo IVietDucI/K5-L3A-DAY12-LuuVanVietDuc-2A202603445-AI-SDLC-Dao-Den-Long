@@ -1,0 +1,22 @@
+{
+  "random_motes": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      -4,
+      6,
+      0
+    ],
+    "carried": 3
+  },
+  "shades": [
+    {
+      "pos": [
+        -2.1,
+        6.8,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "random_motes": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": { "pos": [0, 0, 8], "carried": 6 },
+  "lanterns": [
+    { "id": "L1", "deposited": 8 },
+    { "id": "L2", "pos": [0, 0, 10.001] }
+  ],
+  "shades": [
+    { "id": "edge", "pos": [3, 4.8, 8] },
+    { "id": "high", "pos": [0, 5.801, 8] }
+  ]
+}

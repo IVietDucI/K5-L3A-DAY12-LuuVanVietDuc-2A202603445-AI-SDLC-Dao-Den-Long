@@ -1,0 +1,28 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      0,
+      1,
+      0
+    ],
+    "invuln_ticks": 80,
+    "pulse_cd_ticks": 75,
+    "charm_ticks": 0
+  },
+  "motes": [
+    {
+      "id": "test",
+      "pos": [
+        15,
+        0,
+        0
+      ],
+      "kind": "dropped",
+      "ttl_ticks": 55
+    }
+  ]
+}

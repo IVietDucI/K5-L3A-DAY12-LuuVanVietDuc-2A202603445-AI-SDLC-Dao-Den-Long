@@ -1,8 +1,9 @@
 import { closeSync, openSync, readFileSync, writeSync } from 'node:fs'
-import { DEFAULT_INPUT, Simulation, tuning } from './simulation.js'
+import { DEFAULT_INPUT, Simulation } from './simulation.js'
+import { islands } from './islands.js'
 import { validateInputs, validateScenario } from './protocol.js'
 
-const USAGE = 'node src/headless.js --seed <int> --night 1 [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]'
+const USAGE = 'node src/headless.js --seed <int> --night <1|2|3> [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]'
 
 function parseArguments(args) {
   const known = new Set(['seed', 'night', 'scenario', 'inputs', 'ticks', 'out', 'snapshot-every'])
@@ -27,9 +28,10 @@ function parseArguments(args) {
   const seed = integer('seed', Number.MIN_SAFE_INTEGER)
   const ticks = integer('ticks', 0)
   const every = options.has('snapshot-every') ? integer('snapshot-every', 1) : 10
-  if (integer('night', 1) !== 1) throw new Error('only --night 1 is supported')
+  const night = integer('night', 1)
+  if (!islands[night]) throw new Error('--night must be 1, 2 or 3')
   if (!options.has('out')) throw new Error('--out is required')
-  return { seed, ticks, every, out: options.get('out'), scenario: options.get('scenario'), inputs: options.get('inputs') }
+  return { seed, night, ticks, every, out: options.get('out'), scenario: options.get('scenario'), inputs: options.get('inputs') }
 }
 
 function readJson(path, validate) {
@@ -41,14 +43,15 @@ function readJson(path, validate) {
 }
 
 function run(options, scenario, frames) {
-  const sim = new Simulation(options.seed, scenario)
+  const sim = new Simulation(options.seed, scenario, options.night)
   const fd = openSync(options.out, 'w')
   const write = (value) => writeSync(fd, JSON.stringify(value) + '\n')
   try {
     let input = DEFAULT_INPUT
     let nextFrame = 0
     write(sim.snapshot())
-    while (sim.tick < options.ticks && sim.state === 'playing') {
+    write(sim.startEvent())
+    while (sim.tick < options.ticks && !sim.ended) {
       if (frames[nextFrame]?.tick === sim.tick) {
         input = { ...input, ...frames[nextFrame++] }
       }
@@ -66,7 +69,7 @@ let scenario
 let frames
 try {
   options = parseArguments(process.argv.slice(2))
-  scenario = options.scenario ? readJson(options.scenario, (json) => validateScenario(json, tuning.lantern_count_night1)) : {}
+  scenario = options.scenario ? readJson(options.scenario, (json) => validateScenario(json, islands[options.night])) : {}
   frames = options.inputs ? readJson(options.inputs, validateInputs) : []
 } catch (error) {
   process.stderr.write(`${error.message}\n${USAGE}\n`)

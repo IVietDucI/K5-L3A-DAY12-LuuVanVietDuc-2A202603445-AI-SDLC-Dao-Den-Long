@@ -1,0 +1,204 @@
+{
+  "movement": {
+    "night": 1,
+    "ticks": 12,
+    "every": 4,
+    "scenario": "docs/proof/phase-1/movement.scenario.json",
+    "inputs": "docs/proof/phase-1/movement.inputs.json"
+  },
+  "final-lantern": {
+    "night": 1,
+    "ticks": 3,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/final-lantern.scenario.json",
+    "inputs": "docs/proof/phase-2/final-lantern.inputs.json"
+  },
+  "priority": {
+    "night": 1,
+    "ticks": 3,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/priority.scenario.json"
+  },
+  "pause-dash": {
+    "night": 1,
+    "ticks": 105,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/pause-dash.scenario.json",
+    "inputs": "docs/proof/phase-2/pause-dash.inputs.json"
+  },
+  "fall": {
+    "night": 2,
+    "ticks": 63,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/fall.scenario.json"
+  },
+  "bridge": {
+    "night": 2,
+    "ticks": 25,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/bridge.scenario.json",
+    "inputs": "docs/proof/phase-2/bridge.inputs.json"
+  },
+  "pad-cau": {
+    "night": 2,
+    "ticks": 90,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/pad-cau.scenario.json",
+    "inputs": "docs/proof/phase-2/pad-cau.inputs.json"
+  },
+  "pad-chuong": {
+    "night": 3,
+    "ticks": 55,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/pad-chuong.scenario.json",
+    "inputs": "docs/proof/phase-2/pad-chuong.inputs.json"
+  },
+  "ramp": {
+    "night": 3,
+    "ticks": 75,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/ramp.scenario.json",
+    "inputs": "docs/proof/phase-2/ramp.inputs.json"
+  },
+  "pulse": {
+    "night": 1,
+    "ticks": 185,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/pulse.scenario.json",
+    "inputs": "docs/proof/phase-2/pulse.inputs.json"
+  },
+  "shelter": {
+    "night": 1,
+    "ticks": 32,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/shelter.scenario.json",
+    "inputs": "docs/proof/phase-2/shelter.inputs.json"
+  },
+  "steal-drop": {
+    "night": 2,
+    "ticks": 125,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/steal-drop.scenario.json",
+    "inputs": "docs/proof/phase-2/steal-drop.inputs.json"
+  },
+  "charm": {
+    "night": 2,
+    "ticks": 2705,
+    "every": 5,
+    "scenario": "docs/proof/phase-2/charm.scenario.json",
+    "inputs": "docs/proof/phase-2/charm.inputs.json"
+  },
+  "wind": {
+    "night": 3,
+    "ticks": 2100,
+    "every": 60,
+    "scenario": "docs/proof/phase-2/wind.scenario.json"
+  },
+  "night1-spawn": {
+    "night": 1,
+    "ticks": 800,
+    "every": 10
+  },
+  "night2-spawn": {
+    "night": 2,
+    "ticks": 1201,
+    "every": 20
+  },
+  "night3-spawn": {
+    "night": 3,
+    "ticks": 800,
+    "every": 20,
+    "scenario": "docs/proof/phase-2/night3-spawn.scenario.json"
+  },
+  "full-night": {
+    "night": 3,
+    "ticks": 21600,
+    "every": 600,
+    "scenario": "docs/proof/phase-2/full-night.scenario.json",
+    "inputs": "docs/proof/phase-2/full-night.inputs.json"
+  },
+  "invalid": {
+    "night": 2,
+    "ticks": 2,
+    "every": 1,
+    "inputs": "docs/proof/phase-2/invalid.inputs.json"
+  },
+  "spawn-pickup": {
+    "night": 1,
+    "ticks": 241,
+    "every": 120,
+    "scenario": "docs/proof/phase-2/spawn-pickup.scenario.json"
+  },
+  "partial-deposit": {
+    "night": 1,
+    "ticks": 5,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/partial-deposit.scenario.json",
+    "inputs": "docs/proof/phase-2/partial-deposit.inputs.json"
+  },
+  "drifter-repel": {
+    "night": 2,
+    "ticks": 242,
+    "every": 2,
+    "scenario": "docs/proof/phase-2/drifter-repel.scenario.json",
+    "inputs": "docs/proof/phase-2/drifter-repel.inputs.json"
+  },
+  "pickup-height": {
+    "night": 3,
+    "ticks": 2,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/pickup-height.scenario.json"
+  },
+  "recoil": {
+    "night": 1,
+    "ticks": 100,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/recoil.scenario.json"
+  },
+  "dawn": {
+    "night": 1,
+    "ticks": 300,
+    "every": 2,
+    "scenario": "docs/proof/phase-1/dawn.scenario.json"
+  },
+  "spawn-pulse": {
+    "night": 2,
+    "ticks": 302,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/spawn-pulse.scenario.json",
+    "inputs": "docs/proof/phase-2/spawn-pulse.inputs.json"
+  },
+  "pulse-wall": {
+    "night": 3,
+    "ticks": 16,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/pulse-wall.scenario.json",
+    "inputs": "docs/proof/phase-2/pulse-wall.inputs.json"
+  },
+  "night1-win": {
+    "night": 1,
+    "ticks": 18000,
+    "every": 600,
+    "inputs": "docs/proof/phase-2/night1-win.inputs.json"
+  },
+  "deposit-height": {
+    "night": 3,
+    "ticks": 4,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/deposit-height.scenario.json",
+    "inputs": "docs/proof/phase-2/deposit-height.inputs.json"
+  },
+  "timed-win": {
+    "night": 1,
+    "ticks": 5,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/timed-win.scenario.json",
+    "inputs": "docs/proof/phase-2/final-lantern.inputs.json"
+  },
+  "shade-loss": {
+    "night": 1,
+    "ticks": 100,
+    "every": 1,
+    "scenario": "docs/proof/phase-2/shade-loss.scenario.json"
+  }
+}

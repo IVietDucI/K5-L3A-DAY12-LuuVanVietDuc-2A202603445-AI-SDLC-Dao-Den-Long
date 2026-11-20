@@ -1,0 +1,14 @@
+{
+  "lanterns": [
+    {
+      "id": "L1",
+      "pos": [
+        0,
+        0,
+        -12
+      ],
+      "lit": true,
+      "deposited": 10
+    }
+  ]
+}

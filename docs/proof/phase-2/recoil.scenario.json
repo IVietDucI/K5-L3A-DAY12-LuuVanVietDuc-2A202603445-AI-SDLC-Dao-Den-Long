@@ -1,0 +1,35 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "carried": 7
+  },
+  "shades": [
+    {
+      "id": "S4",
+      "pos": [
+        0,
+        0.85,
+        0
+      ]
+    },
+    {
+      "id": "S2",
+      "pos": [
+        0,
+        0.85,
+        0
+      ]
+    },
+    {
+      "id": "high",
+      "pos": [
+        0,
+        1.501,
+        0
+      ]
+    }
+  ]
+}

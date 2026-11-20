@@ -1,0 +1,17 @@
+{
+  "version": "Chrome/157.0.8103.79",
+  "platform": "win32",
+  "release": "10.0.26300",
+  "arch": "x64",
+  "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+  "backend": "swiftshader",
+  "mode": "vite preview",
+  "frames": 421,
+  "elapsedMs": 8013.700000000001,
+  "width": 1280,
+  "height": 720,
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "average_fps": 52.54,
+  "target_fps": 30,
+  "passed": true
+}

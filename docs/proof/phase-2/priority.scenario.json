@@ -1,0 +1,43 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      41,
+      -10,
+      0
+    ],
+    "flames": 1,
+    "carried": 6
+  },
+  "time_left_s": 0.016666666666666666,
+  "lanterns": [
+    {
+      "id": "L1",
+      "lit": true,
+      "deposited": 10
+    },
+    {
+      "id": "L2",
+      "lit": true,
+      "deposited": 10
+    },
+    {
+      "id": "L3",
+      "lit": true,
+      "deposited": 10
+    },
+    {
+      "id": "L4",
+      "lit": true,
+      "deposited": 10
+    },
+    {
+      "id": "L5",
+      "lit": true,
+      "deposited": 10
+    }
+  ]
+}

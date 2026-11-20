@@ -1,0 +1,4 @@
+node src/headless.js --seed 12 --night 2 --ticks 2 --snapshot-every 1 --out docs/proof/phase-2/invalid.jsonl --inputs docs/proof/phase-2/invalid.inputs.json
+exit=2
+docs/proof/phase-2/invalid.inputs.json: input dash must be a boolean
+node src/headless.js --seed <int> --night <1|2|3> [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]

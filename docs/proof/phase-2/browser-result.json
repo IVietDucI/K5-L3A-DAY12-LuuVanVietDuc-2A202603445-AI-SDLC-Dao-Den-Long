@@ -1,0 +1,55 @@
+{
+  "version": "Chrome/157.0.8103.79",
+  "paused": {
+    "night": 1,
+    "tick": 59,
+    "simTick": 55,
+    "time": 299.0833333333333,
+    "state": "paused"
+  },
+  "whilePaused": {
+    "night": 1,
+    "tick": 77,
+    "simTick": 55,
+    "time": 299.0833333333333,
+    "state": "paused"
+  },
+  "settings": {
+    "volume": 0.35,
+    "sensitivity": 1.35,
+    "cameraDrag": "passed"
+  },
+  "finaleScores": [
+    314,
+    364,
+    364
+  ],
+  "total": 1042,
+  "excludedLosingScore": 777,
+  "scene": {
+    "ambient": 0.7000000000000001,
+    "sky": "0e1430",
+    "fog": "1b2350"
+  },
+  "towerCameraDistance": 3.5499999999999994,
+  "audio": {
+    "state": "running",
+    "tones": 62,
+    "effects": [
+      "paused",
+      "resumed",
+      "mote_picked",
+      "shade_spawned",
+      "countdown",
+      "pulse",
+      "jump",
+      "dash",
+      "player_hit",
+      "deposit",
+      "lantern_lit",
+      "game_over",
+      "won",
+      "lost"
+    ]
+  }
+}

@@ -1,3 +1,5 @@
+import { DRIFTER_STATES, SHADE_STATES } from './simulation.js'
+
 const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
 const isCount = (value) => Number.isSafeInteger(value) && value >= 0
 const vector = (value, size) => Array.isArray(value) && value.length === size && value.every(Number.isFinite)
@@ -17,16 +19,41 @@ export function validateInputs(value) {
     if ('cam_yaw_deg' in frame && !Number.isFinite(frame.cam_yaw_deg)) {
       throw new Error('input cam_yaw_deg must be a finite number')
     }
-    for (const button of ['jump', 'interact', 'pulse']) {
+    for (const button of ['jump', 'interact', 'pulse', 'dash', 'pause']) {
       if (button in frame && typeof frame[button] !== 'boolean') throw new Error(`input ${button} must be a boolean`)
     }
   }
   return value.frames
 }
 
-export function validateScenario(value, lanternCount) {
+function checkEntities(entities, name, check) {
+  if (!Array.isArray(entities)) throw new Error(`scenario ${name} must be an array`)
+  const ids = new Set()
+  for (const entity of entities) {
+    if (!isObject(entity)) throw new Error(`scenario ${name} entries must be objects`)
+    if ('id' in entity) {
+      if (typeof entity.id !== 'string' || !entity.id.trim() || ids.has(entity.id)) {
+        throw new Error(`scenario ${name} IDs must be unique non-empty strings`)
+      }
+      ids.add(entity.id)
+    }
+    check(entity)
+  }
+}
+
+function checkCount(entity, field) {
+  if (field in entity && !isCount(entity[field])) throw new Error(`scenario ${field} must be a non-negative integer`)
+}
+
+function checkActor(actor, type, states) {
+  if (!vector(actor.pos, 3)) throw new Error(`scenario ${type}.pos must be [x,y,z]`)
+  if ('state' in actor && !states.includes(actor.state)) throw new Error(`scenario ${type}.state is unknown`)
+  checkCount(actor, 'state_ticks_left')
+}
+
+export function validateScenario(value, island) {
   if (!isObject(value)) throw new Error('scenario must be an object')
-  for (const flag of ['random_motes', 'random_shades']) {
+  for (const flag of ['random_motes', 'random_shades', 'random_drifters', 'wind_enabled']) {
     if (flag in value && typeof value[flag] !== 'boolean') throw new Error(`scenario ${flag} must be a boolean`)
   }
   if ('time_left_s' in value && (!Number.isFinite(value.time_left_s) || value.time_left_s < 0)) {
@@ -35,31 +62,36 @@ export function validateScenario(value, lanternCount) {
   if ('player' in value) {
     if (!isObject(value.player)) throw new Error('scenario player must be an object')
     if ('pos' in value.player && !vector(value.player.pos, 3)) throw new Error('scenario player.pos must be [x,y,z]')
-    for (const field of ['carried', 'flames']) {
-      if (field in value.player && !isCount(value.player[field])) {
-        throw new Error(`scenario player.${field} must be a non-negative integer`)
-      }
-    }
+    for (const field of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) checkCount(value.player, field)
   }
-  if ('motes' in value && (!Array.isArray(value.motes) || !value.motes.every((pos) => vector(pos, 3)))) {
-    throw new Error('scenario motes must be an array of [x,y,z] positions')
+  if ('motes' in value) {
+    if (!Array.isArray(value.motes)) throw new Error('scenario motes must be an array')
+    checkEntities(value.motes.map((mote) => Array.isArray(mote) ? { pos: mote } : mote), 'motes', (mote) => {
+      if (!vector(mote.pos, 3)) throw new Error('scenario mote.pos must be [x,y,z]')
+      if ('kind' in mote && !['random', 'dropped'].includes(mote.kind)) throw new Error('scenario mote.kind is unknown')
+      checkCount(mote, 'ttl_ticks')
+    })
   }
-  if ('shades' in value) {
-    if (!Array.isArray(value.shades)) throw new Error('scenario shades must be an array')
-    const ids = new Set()
-    for (const shade of value.shades) {
-      if (!isObject(shade) || !vector(shade.pos, 3)) throw new Error('scenario shade.pos must be [x,y,z]')
-      if ('id' in shade) {
-        if (typeof shade.id !== 'string' || !shade.id.trim() || ids.has(shade.id)) {
-          throw new Error('scenario shade IDs must be unique non-empty strings')
-        }
-        ids.add(shade.id)
-      }
+  if ('shades' in value) checkEntities(value.shades, 'shades', (shade) => checkActor(shade, 'shade', SHADE_STATES))
+  if ('drifters' in value) {
+    checkEntities(value.drifters, 'drifters', (drifter) => {
+      checkActor(drifter, 'drifter', DRIFTER_STATES)
+      checkCount(drifter, 'stolen')
+    })
+  }
+  if ('charms' in value) {
+    checkEntities(value.charms, 'charms', (charm) => {
+      if ('pos' in charm && !vector(charm.pos, 3)) throw new Error('scenario charm.pos must be [x,y,z]')
+      if ('available' in charm && typeof charm.available !== 'boolean') throw new Error('scenario charm.available must be a boolean')
+      checkCount(charm, 'respawn_ticks')
+    })
+    if (value.charms.some((charm, index) => !charm.pos && !island.charms[index])) {
+      throw new Error('scenario charm.pos is required when there is no default position')
     }
   }
   if ('lanterns' in value) {
     if (!Array.isArray(value.lanterns)) throw new Error('scenario lanterns must be an array')
-    const allowed = new Set(Array.from({ length: lanternCount }, (_, i) => `L${i + 1}`))
+    const allowed = new Set(island.lanterns.map((_, i) => `L${i + 1}`))
     for (const lantern of value.lanterns) {
       if (!isObject(lantern) || !allowed.delete(lantern.id)) throw new Error('scenario lantern ID is unknown or repeated')
       if ('pos' in lantern && !vector(lantern.pos, 3)) throw new Error('scenario lantern.pos must be [x,y,z]')

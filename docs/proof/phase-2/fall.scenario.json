@@ -1,0 +1,25 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      26,
+      -9.999,
+      2.1
+    ],
+    "flames": 2,
+    "carried": 7,
+    "invuln_ticks": 200
+  },
+  "shades": [
+    {
+      "pos": [
+        0,
+        0.85,
+        0
+      ]
+    }
+  ]
+}

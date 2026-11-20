@@ -1,0 +1,38 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "carried": 7,
+    "invuln_ticks": 200
+  },
+  "shades": [
+    {
+      "id": "edge",
+      "pos": [
+        3,
+        4.8,
+        0
+      ]
+    },
+    {
+      "id": "vertical",
+      "pos": [
+        0,
+        5.801,
+        0
+      ]
+    },
+    {
+      "id": "same",
+      "pos": [
+        0,
+        0.8,
+        0
+      ],
+      "state": "stunned",
+      "state_ticks_left": 20
+    }
+  ]
+}

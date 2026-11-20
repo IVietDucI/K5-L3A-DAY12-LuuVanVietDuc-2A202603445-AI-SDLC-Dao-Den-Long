@@ -1,0 +1,22 @@
+
+> dao-den-long@0.1.0 test
+> node --test
+
+✔ movement, camera yaw, normalization, pickup, held input and jump (92.7432ms)
+✔ last deposit at the inclusive radius lights L5, wins, and awards time and flame bonuses (104.9906ms)
+✔ the first shade acts immediately, then hits again when immunity expires (54.9357ms)
+✔ Pulse uses XZ radius, spends motes, pushes and stuns for the advertised time (61.2389ms)
+✔ malformed inputs and scenario return 2 and explain the failure on stderr (108.4627ms)
+✔ two independent seeded CLI runs produce identical JSONL, including spawned shade IDs (140.5142ms)
+✔ a complete round with the default island, motes and shades is winnable (86.6432ms)
+✔ dawn clamps time and stops a long request (72.0148ms)
+✔ Mây is safe at the exact shelter boundary and the shade retreats (0.9663ms)
+✔ holding interact does not deposit new motes until a new press (0.4274ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 824.3386

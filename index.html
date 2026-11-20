@@ -3,51 +3,70 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cùng Mây gom đom đóm và thắp năm Đèn Lồng Lớn trên Đảo Bến.">
-    <title>Đảo Đèn Lồng · Đảo Bến</title>
+    <meta name="description" content="Cùng Mây gom đom đóm và thắp đèn trên ba hòn đảo trước rạng đông.">
+    <title>Đảo Đèn Lồng · Ba hòn đảo</title>
   </head>
   <body>
     <main id="game" tabindex="-1" aria-label="Đảo Đèn Lồng">
-      <canvas id="world" aria-label="Đảo Bến ở góc nhìn thứ ba"></canvas>
+      <canvas id="world" aria-label="Cảnh đảo ở góc nhìn thứ ba"></canvas>
       <div id="markers" aria-hidden="true"></div>
+      <div id="lantern-arrow" aria-label="Hướng tới đèn chưa sáng" hidden><span aria-hidden="true">▲</span><strong></strong></div>
 
-      <header class="hud">
+      <header class="hud" id="hud" hidden>
         <div class="identity">
           <span class="lantern-icon" aria-hidden="true"></span>
           <div>
-            <p>ĐÊM 1 · ĐẢO BẾN</p>
-            <h1>Đảo Đèn Lồng</h1>
+            <p id="night-label"></p>
+            <span class="flame-pips" id="flames"></span>
           </div>
         </div>
+        <div class="clock"><span>Rạng đông</span><strong id="timer"></strong></div>
         <dl class="stats">
-          <div><dt>Lửa</dt><dd id="flames"></dd></div>
-          <div><dt>Đom đóm</dt><dd id="carried"></dd></div>
-          <div><dt>Rạng đông</dt><dd id="timer"></dd></div>
-          <div><dt>Điểm</dt><dd id="score"></dd></div>
+          <div><dt>Đèn</dt><dd id="lit"></dd></div>
+          <div><dt>Điểm đêm</dt><dd id="score"></dd></div>
         </dl>
       </header>
 
-      <aside class="map" aria-label="Bản đồ và các đèn đã thắp">
-        <canvas id="map" width="152" height="152" role="img" aria-label="Vị trí của Mây và năm Đèn Lồng Lớn"></canvas>
-        <p><strong id="lit">0 / 5</strong> đèn đã thắp</p>
+      <aside class="map" id="map-panel" aria-label="Bản đồ" hidden>
+        <canvas id="map" width="152" height="152" role="img" aria-label="Vị trí của Mây và các Đèn Lồng Lớn"></canvas>
       </aside>
 
-      <section class="field-guide" aria-label="Hướng dẫn chơi">
-        <p id="objective">Gom đom đóm và thắp 5 đèn trước rạng đông.</p>
+      <section class="field-guide" id="guide" aria-label="Hướng dẫn chơi" hidden>
         <div class="controls">
           <span><kbd>WASD</kbd> Đi</span>
           <span><kbd>Space</kbd> Nhảy</span>
-          <span><kbd>E</kbd> Nạp</span>
-          <span><kbd>F</kbd> Pulse <small id="pulse-info"></small></span>
-          <span>Kéo chuột để xoay góc nhìn</span>
+          <span><kbd>Esc</kbd> Dừng</span>
         </div>
       </section>
+      <section id="inventory" class="inventory" aria-label="Đom đóm đang mang" hidden>
+        <p id="objective" role="status"></p>
+        <div id="mote-slots" aria-hidden="true"></div>
+        <span id="carried"></span>
+      </section>
+      <div class="abilities" id="abilities" hidden>
+        <div class="ability" id="dash-ability"><kbd>Shift</kbd><span>Lướt</span><strong id="dash-info"></strong></div>
+        <div class="ability" id="pulse-ability"><kbd>F</kbd><span>Tỏa Sáng</span><strong id="pulse-info"></strong></div>
+      </div>
 
       <section id="round-panel" class="round-panel" aria-labelledby="round-title">
-        <p id="round-caption">TRƯỚC RẠNG ĐÔNG</p>
-        <h2 id="round-title">Thắp sáng Đảo Bến</h2>
-        <p id="round-detail">Giúp Mây gom đom đóm, thắp năm Đèn Lồng Lớn và tránh Bóng Mực.</p>
-        <button id="round-button" type="button">Bắt đầu</button>
+        <p id="round-caption"></p>
+        <h1 id="round-title">Đảo Đèn Lồng</h1>
+        <p id="round-detail">Thắp đèn trên ba hòn đảo trước rạng đông.</p>
+        <div class="panel-actions">
+          <button id="round-button" type="button">Chơi</button>
+          <button id="secondary-button" class="secondary" type="button">Cài đặt</button>
+          <button id="menu-button" class="secondary" type="button" hidden>Về menu</button>
+        </div>
+      </section>
+      <section id="settings-panel" class="round-panel" aria-labelledby="settings-title" hidden>
+        <h2 id="settings-title">Cài đặt</h2>
+        <label class="setting">Âm lượng <output for="volume" id="volume-value"></output>
+          <input id="volume" type="range" min="0" max="1" step=".05">
+        </label>
+        <label class="setting">Độ nhạy chuột <output for="sensitivity" id="sensitivity-value"></output>
+          <input id="sensitivity" type="range" min=".25" max="2" step=".05">
+        </label>
+        <button id="settings-back" type="button">Quay lại</button>
       </section>
     </main>
     <script type="module" src="/src/main.js"></script>
