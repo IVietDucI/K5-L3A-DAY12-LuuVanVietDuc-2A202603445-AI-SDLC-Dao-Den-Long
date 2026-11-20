@@ -1,0 +1,9 @@
+node src/headless.js --seed 12 --night 1 --ticks 5 --inputs docs/proof/phase-1/invalid.inputs.json --out docs/proof/phase-1/invalid-inputs.jsonl
+exit=2
+docs/proof/phase-1/invalid.inputs.json: input frame ticks must be non-negative integers in strictly increasing order
+node src/headless.js --seed <int> --night 1 [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]
+
+node src/headless.js --seed 12 --night 1 --ticks 5 --scenario docs/proof/phase-1/invalid.scenario.json --out docs/proof/phase-1/invalid-scenario.jsonl
+exit=2
+docs/proof/phase-1/invalid.scenario.json: scenario lantern ID is unknown or repeated
+node src/headless.js --seed <int> --night 1 [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]

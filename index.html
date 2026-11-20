@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cùng Mây gom đom đóm và thắp năm Đèn Lồng Lớn trên Đảo Bến.">
+    <title>Đảo Đèn Lồng · Đảo Bến</title>
+  </head>
+  <body>
+    <main id="game" tabindex="-1" aria-label="Đảo Đèn Lồng">
+      <canvas id="world" aria-label="Đảo Bến ở góc nhìn thứ ba"></canvas>
+      <div id="markers" aria-hidden="true"></div>
+
+      <header class="hud">
+        <div class="identity">
+          <span class="lantern-icon" aria-hidden="true"></span>
+          <div>
+            <p>ĐÊM 1 · ĐẢO BẾN</p>
+            <h1>Đảo Đèn Lồng</h1>
+          </div>
+        </div>
+        <dl class="stats">
+          <div><dt>Lửa</dt><dd id="flames"></dd></div>
+          <div><dt>Đom đóm</dt><dd id="carried"></dd></div>
+          <div><dt>Rạng đông</dt><dd id="timer"></dd></div>
+          <div><dt>Điểm</dt><dd id="score"></dd></div>
+        </dl>
+      </header>
+
+      <aside class="map" aria-label="Bản đồ và các đèn đã thắp">
+        <canvas id="map" width="152" height="152" role="img" aria-label="Vị trí của Mây và năm Đèn Lồng Lớn"></canvas>
+        <p><strong id="lit">0 / 5</strong> đèn đã thắp</p>
+      </aside>
+
+      <section class="field-guide" aria-label="Hướng dẫn chơi">
+        <p id="objective">Gom đom đóm và thắp 5 đèn trước rạng đông.</p>
+        <div class="controls">
+          <span><kbd>WASD</kbd> Đi</span>
+          <span><kbd>Space</kbd> Nhảy</span>
+          <span><kbd>E</kbd> Nạp</span>
+          <span><kbd>F</kbd> Pulse <small id="pulse-info"></small></span>
+          <span>Kéo chuột để xoay góc nhìn</span>
+        </div>
+      </section>
+
+      <section id="round-panel" class="round-panel" aria-labelledby="round-title">
+        <p id="round-caption">TRƯỚC RẠNG ĐÔNG</p>
+        <h2 id="round-title">Thắp sáng Đảo Bến</h2>
+        <p id="round-detail">Giúp Mây gom đom đóm, thắp năm Đèn Lồng Lớn và tránh Bóng Mực.</p>
+        <button id="round-button" type="button">Bắt đầu</button>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "player": { "pos": [0, 0, 0], "carried": 5, "flames": 2 },
+  "motes": [],
+  "shades": [{ "id": "Bong-1", "pos": [0.85, 20, 0] }]
+}

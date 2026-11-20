@@ -1,0 +1,45 @@
+{
+  "version": "Chrome/157.0.8103.79",
+  "afterPulse": {
+    "carried": "0 / 8",
+    "score": "20",
+    "flames": "◆◆◆",
+    "lit": "0 / 5",
+    "timer": "2:00",
+    "round-title": "Thắp sáng Đảo Bến",
+    "round-button": "Bắt đầu",
+    "pulse-info": "đang hồi"
+  },
+  "cameraDrag": "passed",
+  "loss": {
+    "carried": "0 / 8",
+    "score": "20",
+    "flames": "◇◇◇",
+    "lit": "0 / 5",
+    "timer": "1:46",
+    "round-title": "Đêm chưa qua",
+    "round-button": "Chơi lại",
+    "pulse-info": "· 2 đom đóm"
+  },
+  "reset": {
+    "carried": "0 / 8",
+    "score": "0",
+    "flames": "◆◆◆",
+    "lit": "0 / 5",
+    "timer": "2:00",
+    "round-title": "Đêm chưa qua",
+    "round-button": "Chơi lại",
+    "pulse-info": "· 2 đom đóm"
+  },
+  "win": {
+    "carried": "0 / 8",
+    "score": "926",
+    "flames": "◆◇◇",
+    "lit": "5 / 5",
+    "timer": "1:29",
+    "round-title": "Đảo Bến đã sáng!",
+    "round-button": "Chơi lại",
+    "pulse-info": "· 2 đom đóm"
+  },
+  "replayAfterWin": "passed"
+}

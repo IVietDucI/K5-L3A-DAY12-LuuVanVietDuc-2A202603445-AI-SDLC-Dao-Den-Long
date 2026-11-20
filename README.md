@@ -5,6 +5,43 @@
 
 ---
 
+## Chơi Đêm 1 — Đảo Bến
+
+**Lưu Văn Việt Đức · 2A202603445 · L3A**
+
+Cần Node.js 20.19+ (dòng 20) hoặc 22.12+, npm và trình duyệt có WebGL 2. Chạy trong thư mục repo trên Windows, macOS hoặc Linux.
+
+```sh
+npm ci
+npm run dev
+```
+
+Mở địa chỉ Vite in ra (thường là `http://localhost:5173/`) và bấm **Bắt đầu**. Trên PowerShell, dùng `npm.cmd` thay `npm` nếu chính sách thực thi chặn `npm.ps1`.
+
+| Điều khiển | Hành động |
+|---|---|
+| WASD hoặc phím mũi tên | Đi theo góc nhìn camera |
+| Space | Nhảy |
+| Kéo chuột trên cảnh | Xoay camera |
+| E | Nạp vào đèn chưa sáng gần nhất trong tầm |
+| F | Dùng Pulse |
+
+Tiến gần đom đóm để tự nhặt, tối đa 8 con. Mỗi Đèn Lồng Lớn cần 4 con. Vòng sáng quanh đèn đã thắp bảo vệ Mây trong 4 m. Pulse tốn 2 đom đóm, hồi sau 1,5 giây, đẩy Bóng Mực trong 5 m ra xa 2,5 m và làm choáng 2 giây.
+
+Thắp đủ L1–L5 trước khi hết 120 giây để thắng. Cạn 3 lửa hoặc tới rạng đông thì thua. Dùng **Chơi lại** sau khi ván kết thúc. Mép đảo chặn di chuyển (`fall_enabled: false`). Trúng đòn giảm một lửa và giữ số đom đóm đang mang (`hit_drop_ratio: 0`).
+
+**Điểm.** +10 mỗi đom đóm nhặt, +100 mỗi đèn thắp, +25 mỗi Bóng Mực bị Pulse làm choáng. Khi thắng, nhận thêm 2 điểm mỗi giây nguyên còn và 50 điểm mỗi lửa còn.
+
+## Kiểm chứng Phase 1
+
+```sh
+npm test
+npm run build
+node src/headless.js --seed 12 --night 1 --scenario docs/proof/phase-1/movement.scenario.json --inputs docs/proof/phase-1/movement.inputs.json --ticks 12 --out trial.jsonl --snapshot-every 4
+```
+
+CLI và giao diện dùng chung simulation 60 tick/giây. Xem [Test Contract v1.0](game.contract.json), [Bảng kiểm chứng](docs/proof/phase-1/README.md) và [ghi chú Phase 1](docs/notes/phase-1.md).
+
 ## Tài liệu của lab
 
 | File | Nội dung |
